@@ -1,0 +1,10 @@
+{
+  "scripts": {
+    "dev": "mintlify dev"
+  },
+  "dependencies": {
+    "gulp": "^5.0.0",
+    "gulp-rimraf": "^1.0.0",
+    "gulp-shell": "^0.8.0"
+  }
+}
