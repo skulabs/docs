@@ -5,6 +5,7 @@
     "dark": "/logo/dark.svg",
     "light": "/logo/light.svg"
   },
+  "openapi": ["./swagger.json"],
   "favicon": "/favicon.svg",
   "colors": {
     "primary": "#0D9373",
@@ -25,12 +26,7 @@
     "name": "Dashboard",
     "url": "https://dashboard.mintlify.com"
   },
-  "tabs": [
-    {
-      "name": "API Reference",
-      "url": "api-reference"
-    }
-  ],
+  "tabs": [],
   "anchors": [
     {
       "name": "Documentation",
@@ -69,17 +65,240 @@
       ]
     },
     {
-      "group": "API Documentation",
+      "group": "customer",
       "pages": [
-        "api-reference/introduction"
+        "api-docs/customer/post-customeradd_note",
+        "api-docs/customer/post-customeradd_tag",
+        "api-docs/customer/get-customerget_customer",
+        "api-docs/customer/get-customerget_customers",
+        "api-docs/customer/post-customerremove_tag"
       ]
     },
     {
-      "group": "Endpoint Examples",
+      "group": "cycle_count",
       "pages": [
-        "api-reference/endpoint/get",
-        "api-reference/endpoint/create",
-        "api-reference/endpoint/delete"
+        "api-docs/cycle_count/get-cycle_countget",
+        "api-docs/cycle_count/get-cycle_countget_all"
+      ]
+    },
+    {
+      "group": "distributor",
+      "pages": [
+        "api-docs/distributor/put-distributoradd_item",
+        "api-docs/distributor/post-distributorcreate",
+        "api-docs/distributor/put-distributoredit_item",
+        "api-docs/distributor/get-distributorget",
+        "api-docs/distributor/delete-distributorremove_item",
+        "api-docs/distributor/put-distributorupdate"
+      ]
+    },
+    {
+      "group": "inventory",
+      "pages": [
+        "api-docs/inventory/post-inventorybulk_reconciliation",
+        "api-docs/inventory/put-inventorydecrease_on_hand",
+        "api-docs/inventory/post-inventorydeduct_serial_numbers",
+        "api-docs/inventory/get-inventoryget",
+        "api-docs/inventory/post-inventoryget_grouped_locations_map",
+        "api-docs/inventory/get-inventoryget_history",
+        "api-docs/inventory/get-inventoryget_inventory_history",
+        "api-docs/inventory/get-inventoryget_item_free",
+        "api-docs/inventory/post-inventoryget_items",
+        "api-docs/inventory/post-inventoryget_items_and_kits_map",
+        "api-docs/inventory/post-inventoryget_items_incoming",
+        "api-docs/inventory/post-inventoryget_items_map",
+        "api-docs/inventory/post-inventoryget_kits_map",
+        "api-docs/inventory/post-inventoryget_on_hand_location_map",
+        "api-docs/inventory/get-inventoryget_received_history",
+        "api-docs/inventory/get-inventoryget_reserved_map",
+        "api-docs/inventory/post-inventoryget_via_post_reserved_map",
+        "api-docs/inventory/put-inventoryincrease_on_hand",
+        "api-docs/inventory/put-inventoryupsert"
+      ]
+    },
+    {
+      "group": "inventory_table",
+      "pages": [
+        "api-docs/inventory_table/post-sinventoryinventory_tablebuild_po_rows",
+        "api-docs/inventory_table/post-sinventoryinventory_tablebuild_reconcile_rows",
+        "api-docs/inventory_table/post-sinventoryinventory_tablebuild_rows",
+        "api-docs/inventory_table/post-sinventoryinventory_tablebuild_to_rows",
+        "api-docs/inventory_table/post-sinventoryinventory_tablebuild_velocity_rows"
+      ]
+    },
+    {
+      "group": "item",
+      "pages": [
+        "api-docs/item/post-itemadd_barcode",
+        "api-docs/item/post-itemadd_custom_field",
+        "api-docs/item/post-itemadd_serial_numbers",
+        "api-docs/item/post-itemadd_tag",
+        "api-docs/item/post-itembulk_assign",
+        "api-docs/item/put-itembulk_upsert",
+        "api-docs/item/post-itemcreate",
+        "api-docs/item/post-itemcreate_upsert",
+        "api-docs/item/get-itemfind_by_barcode",
+        "api-docs/item/get-itemget",
+        "api-docs/item/get-itemget_locations",
+        "api-docs/item/delete-itemnew_remove_serial_number",
+        "api-docs/item/delete-itemremove",
+        "api-docs/item/delete-itemremove_barcode",
+        "api-docs/item/delete-itemremove_custom_field",
+        "api-docs/item/delete-itemremove_serial_number",
+        "api-docs/item/delete-itemremove_tag",
+        "api-docs/item/put-itemset_tags",
+        "api-docs/item/put-itemupdate",
+        "api-docs/item/put-itemupdate_alias_locations",
+        "api-docs/item/put-itemupsert",
+        "api-docs/item/delete-sjobitembulk_remove"
+      ]
+    },
+    {
+      "group": "kit",
+      "pages": [
+        "api-docs/kit/post-kitadd_barcode",
+        "api-docs/kit/post-kitadd_custom_field",
+        "api-docs/kit/post-kitadd_item",
+        "api-docs/kit/post-kitadd_tag",
+        "api-docs/kit/post-kitcreate",
+        "api-docs/kit/put-kitedit_item",
+        "api-docs/kit/get-kitget",
+        "api-docs/kit/delete-kitremove",
+        "api-docs/kit/delete-kitremove_barcode",
+        "api-docs/kit/delete-kitremove_custom_field",
+        "api-docs/kit/delete-kitremove_item",
+        "api-docs/kit/delete-kitremove_tag",
+        "api-docs/kit/put-kitset_tags",
+        "api-docs/kit/put-kitupdate"
+      ]
+    },
+    {
+      "group": "listing",
+      "pages": [
+        "api-docs/listing/get-listingget",
+        "api-docs/listing/post-sjoblistinglisting_links_csv_import",
+        "api-docs/listing/post-sjoblistingrules_csv_import"
+      ]
+    },
+    {
+      "group": "location",
+      "pages": [
+        "api-docs/location/post-locationadd_item",
+        "api-docs/location/post-locationcreate",
+        "api-docs/location/get-locationget",
+        "api-docs/location/get-locationget_all",
+        "api-docs/location/get-locationget_items",
+        "api-docs/location/get-locationget_list",
+        "api-docs/location/delete-locationremove_item"
+      ]
+    },
+    {
+      "group": "oauth",
+      "pages": [
+        "api-docs/oauth/post-oauthtoken",
+        "api-docs/oauth/get-oauthuserinfo"
+      ]
+    },
+    {
+      "group": "order",
+      "pages": [
+        "api-docs/order/post-orderadd",
+        "api-docs/order/post-orderadd_manual_shipment",
+        "api-docs/order/post-orderadd_note",
+        "api-docs/order/post-orderadd_tag",
+        "api-docs/order/post-orderadd_tag_by_name",
+        "api-docs/order/post-orderbulk_add_manual_shipments",
+        "api-docs/order/get-orderget",
+        "api-docs/order/get-orderget_all",
+        "api-docs/order/get-orderget_archived",
+        "api-docs/order/get-orderget_by_base_order_number",
+        "api-docs/order/get-orderget_customs_information",
+        "api-docs/order/get-orderget_scanned_serial_numbers",
+        "api-docs/order/get-orderget_shipped",
+        "api-docs/order/get-orderget_single",
+        "api-docs/order/get-orderget_single_bulk",
+        "api-docs/order/get-orderget_skipped_scans",
+        "api-docs/order/get-orderget_unscanned_items",
+        "api-docs/order/put-ordermodify_financial_status",
+        "api-docs/order/put-ordermodify_status",
+        "api-docs/order/delete-orderremove_tag",
+        "api-docs/order/put-orderset_tags",
+        "api-docs/order/get-orderstatus",
+        "api-docs/order/get-orderundershipped_item_report",
+        "api-docs/order/get-orderunscanned_order_list"
+      ]
+    },
+    {
+      "group": "purchase_order",
+      "pages": [
+        "api-docs/purchase_order/post-purchase_orderadd_tag",
+        "api-docs/purchase_order/post-purchase_orderbulk_accept",
+        "api-docs/purchase_order/post-purchase_ordercreate",
+        "api-docs/purchase_order/post-purchase_ordercreate_v2",
+        "api-docs/purchase_order/get-purchase_orderget",
+        "api-docs/purchase_order/get-purchase_orderget_by_status",
+        "api-docs/purchase_order/get-purchase_orderget_closed",
+        "api-docs/purchase_order/get-purchase_orderget_closed_with_items",
+        "api-docs/purchase_order/get-purchase_orderget_processing",
+        "api-docs/purchase_order/get-purchase_orderget_processing_with_item_id",
+        "api-docs/purchase_order/get-purchase_orderget_processing_with_items",
+        "api-docs/purchase_order/get-purchase_orderget_single",
+        "api-docs/purchase_order/get-purchase_orderget_single_by_number",
+        "api-docs/purchase_order/post-purchase_ordernew_create",
+        "api-docs/purchase_order/post-purchase_orderremove_tag",
+        "api-docs/purchase_order/put-purchase_orderset_tags"
+      ]
+    },
+    {
+      "group": "run",
+      "pages": [
+        "api-docs/run/post-runsync"
+      ]
+    },
+    {
+      "group": "shipments",
+      "pages": [
+        "api-docs/shipments/get-shipmentsget",
+        "api-docs/shipments/get-shipmentsget_by_range",
+        "api-docs/shipments/get-sjobshipmentscsv_export"
+      ]
+    },
+    {
+      "group": "shipping",
+      "pages": [
+        "api-docs/shipping/post-sshipshippingrestore_inventory",
+        "api-docs/shipping/delete-sshipshippingvoid"
+      ]
+    },
+    {
+      "group": "store",
+      "pages": [
+        "api-docs/store/get-storeget"
+      ]
+    },
+    {
+      "group": "tag",
+      "pages": [
+        "api-docs/tag/post-tagadd",
+        "api-docs/tag/get-tagget",
+        "api-docs/tag/delete-tagremove",
+        "api-docs/tag/put-tagupdate"
+      ]
+    },
+    {
+      "group": "transfer_order",
+      "pages": [
+        "api-docs/transfer_order/post-transfer_ordercreate",
+        "api-docs/transfer_order/get-transfer_orderget",
+        "api-docs/transfer_order/get-transfer_orderget_all"
+      ]
+    },
+    {
+      "group": "warehouse",
+      "pages": [
+        "api-docs/warehouse/post-warehousecreate",
+        "api-docs/warehouse/get-warehouseget",
+        "api-docs/warehouse/get-warehousestats"
       ]
     }
   ],
