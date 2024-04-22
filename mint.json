@@ -35,6 +35,15 @@
   ],
   "navigation": [
     {
+
+      "group": "Getting Started",
+      "pages": [
+        "getting-started/getting-an-api-key",
+        "getting-started/authentication",
+        "getting-started/your-first-api-call"
+      ]
+    },
+    {
       "group": "Customer",
       "pages": [
         "api-docs/customer/customer--add-note",

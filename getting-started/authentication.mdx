@@ -1,0 +1,37 @@
+---
+title: 'Authentication'
+description: 'How to get your SKULabs API Key'
+icon: 'shield'
+---
+
+To access the API endpoints, you need to authenticate your requests. Below are the available authentication methods:
+
+
+<Steps>
+  <Step title="Bearer Token Authentication">
+
+  Include your access token in the Authorization header using the "Bearer" scheme.
+
+  ```http
+  Authorization: Bearer your_access_token_here
+  ```
+  </Step>
+
+  <Step title="SKULabsToken Authentication">
+  Similar to Bearer Token Authentication, but use the "SKULabsToken" scheme in the Authorization header.
+
+  ```http
+  Authorization: SKULabsToken your_access_token_here
+  ```
+  </Step>
+
+  <Step title="Basic Authentication">
+  You can also use Basic Authentication by providing your API key as the password. The username can be any string.
+
+  ```shell
+  curl -u "skulabs:your_access_token_here" https://api.skulabs.com/
+  ```
+  </Step>
+</Steps>
+
+<Tip>When you're ready to start using our API, replace "_your_access_token_here_" with your actual access token.</Tip>

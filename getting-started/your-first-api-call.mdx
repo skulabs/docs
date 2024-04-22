@@ -1,0 +1,70 @@
+---
+title: 'Your First API Call'
+description: 'Making your first API call'
+icon: 'code'
+---
+
+<Tip>This example is for a Node.js environment. If you'd like to see examples in your programming language, you can visit the page for the endpoint you want to call.</Tip>
+
+### Prerequisites
+Ensure you have Axios or a similar library installed in your Node.js 18+ project.
+
+```bash
+npm install axios
+```
+
+### Sample Code
+The code below creates a location and then retrieves a list of locations where warehouse_id = '1234'.
+
+```javascript
+
+const axios = require('axios');
+
+// Replace 'your_access_token_here' with your actual access token
+const accessToken = 'your_access_token_here';
+
+const config = {
+  headers: {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${accessToken}`
+  }
+};
+
+
+
+// Lets create a new location
+const create_location_url = new URL('https://api.skulabs.com/location/create');
+
+const postData = {
+  warehouse_id: '1234',
+  name: 'My New Location'
+};
+
+axios.post(create_location_url.toString(), postData, config)
+.then(function (response) {
+  console.log('Response:', response.data);
+}).catch(function (error) {
+  console.error('Error:', error);
+});
+
+// Now, let's get the list of locations.
+const get_list_url = new URL('https://api.skulabs.com/location/get_list');
+
+const selector = { warehouse_id: '1234' };
+
+// Append the selector to the URL
+get_list_url.searchParams.append('selector', JSON.stringify(selector));
+
+
+axios.get(get_list_url.toString(), config)
+.then(function (response) {
+  console.log('Response:', response.data);
+}).catch(function (error) {
+  console.error('Error:', error);
+});
+```
+### Notes
+* Replace _your_access_token_here_ with your actual access token for authentication.
+* This script handles both successful and error responses from the API.
+
+<Check>You did it! Now that you've succesfully connected to our API, feel free to explore all of our endpoints.</Check>
