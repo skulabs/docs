@@ -44,7 +44,10 @@
       ]
     },{
       "group": "Best Practices",
-      "pages": ["best-practices/handling-status-codes"]
+      "pages": [
+        "best-practices/handling-status-codes",
+        "best-practices/querying"
+      ]
     },
     {
       "group": "Customer",
