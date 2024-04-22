@@ -1,0 +1,72 @@
+---
+title: "Handling Status Codes"
+description: "How to treat status codes from SKULabs API calls"
+icon: "traffic-light"
+---
+
+## 200 - OK
+
+- **What does it mean?**
+
+<Check>The request has succeeded and our servers have returned the expected data.</Check>
+
+
+
+- **What should I do?**
+
+No action required. You can proceed to use the data returned by our API in your application or process.
+
+## 400 - Generic Error
+
+- **What does it mean?**
+
+<Warning>The request could not be understood by the SKULabs servers due to a malformed request or data validation errors.</Warning>
+
+- **What should I do?**
+
+Review your request to ensure all parameters are correct and conform to the API specifications. Check our API documentation for required data formats and types. Resend your request after you've made corrections.
+
+## 401 - Not Authorized
+
+- **What does it mean?**
+
+<Warning>The request has not been fulfilled because it lacks valid authentication credentials.</Warning>
+
+- **What should I do?**
+
+Ensure your API keys or authentication credentials are correctly included in your request headers. [Generate an API key](/getting-started/getting-an-api-key) if you haven't already.
+
+If you've already generated an API key, make sure you are [passing it correctly](/getting-started/authentication) in the request headers.
+
+If you continue to face issues, confirm that the credentials have not expired and are still valid for accessing our API.
+
+## 403 - Missing Permissions
+
+- **What does it mean?**
+
+<Warning>The authenticated user does not have permission to perform a specific action or request.</Warning>
+
+- **What should I do?**
+
+Check the permissions associated with your API credentials. You may need to request additional permissions or roles from an administrator on your SKULabs account. Verify that your API keys are correctly configured for the required scope of actions.
+
+
+## 429 - Too Many Requests
+
+- **What does it mean?**
+
+<Warning>The request cannot be served due to the rate limit being exceeded.</Warning>
+
+- **What should I do?**
+
+Slow down your request rate to the API and respect the rate limits that are documented in the SKULabs API documentation. Consider implementing exponential backoff or other rate limiting handling mechanisms in your application to manage request rates dynamically.
+
+## 502 - Bad Gateway
+
+- **What does it mean?**
+
+<Warning>The authenticated user does not have permission to perform a specific action or request.</Warning>
+
+- **What should I do?**
+
+This error is typically a problem on the server side, not an issue with your request. Wait a few moments and then resend your request. If the problem persists, contact SKULabs support for assistance.

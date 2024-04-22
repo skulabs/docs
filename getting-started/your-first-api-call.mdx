@@ -4,7 +4,7 @@ description: 'Making your first API call'
 icon: 'code'
 ---
 
-<Tip>This example is for a Node.js environment. If you'd like to see examples in your programming language, you can visit the page for the endpoint you want to call.</Tip>
+<Tip>This example is for a Node.js environment. If you'd like to see examples in your programming language, you can visit the page for the endpoint you wish to call.</Tip>
 
 ### Prerequisites
 Ensure you have Axios or a similar library installed in your Node.js 18+ project.
@@ -30,8 +30,6 @@ const config = {
   }
 };
 
-
-
 // Lets create a new location
 const create_location_url = new URL('https://api.skulabs.com/location/create');
 
@@ -54,7 +52,6 @@ const selector = { warehouse_id: '1234' };
 
 // Append the selector to the URL
 get_list_url.searchParams.append('selector', JSON.stringify(selector));
-
 
 axios.get(get_list_url.toString(), config)
 .then(function (response) {

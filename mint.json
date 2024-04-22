@@ -42,6 +42,9 @@
         "getting-started/authentication",
         "getting-started/your-first-api-call"
       ]
+    },{
+      "group": "Best Practices",
+      "pages": ["best-practices/handling-status-codes"]
     },
     {
       "group": "Customer",
