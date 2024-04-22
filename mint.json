@@ -26,291 +26,251 @@
     "name": "Dashboard",
     "url": "https://app.skulabs.com"
   },
-  "tabs": [
-    {
-        "name": "API Reference",
-        "url": "api-docs"
-    }
-  ],
   "anchors": [
-    {
-      "name": "Documentation",
-      "icon": "book-open-cover",
-      "url": "https://mintlify.com/docs"
-    },
-    {
-      "name": "Community",
-      "icon": "slack",
-      "url": "https://mintlify.com/community"
-    },
     {
       "name": "Blog",
       "icon": "newspaper",
-      "url": "https://mintlify.com/blog"
+      "url": "https://blog.skulabs.com/"
     }
   ],
   "navigation": [
     {
-      "group": "Get Started",
+      "group": "Customer",
       "pages": [
-        "introduction",
-        "quickstart",
-        "development"
+        "api-docs/customer/customer--add-note",
+        "api-docs/customer/customer--add-tag",
+        "api-docs/customer/customer--get-customer",
+        "api-docs/customer/customer--get-customers",
+        "api-docs/customer/customer--remove-tag"
       ]
     },
     {
-      "group": "Essentials",
+      "group": "Cycle Count",
       "pages": [
-        "essentials/markdown",
-        "essentials/code",
-        "essentials/images",
-        "essentials/settings",
-        "essentials/navigation",
-        "essentials/reusable-snippets"
+        "api-docs/cycle_count/cycle-count--get-all",
+        "api-docs/cycle_count/cycle-count--get"
       ]
     },
     {
-      "group": "API Reference",
-      "pages": ["api-docs/overview"]
+      "group": "Distributor",
+      "pages": [
+        "api-docs/distributor/distributor--add-item",
+        "api-docs/distributor/distributor--create",
+        "api-docs/distributor/distributor--edit-item",
+        "api-docs/distributor/distributor--get",
+        "api-docs/distributor/distributor--remove-item",
+        "api-docs/distributor/distributor--update"
+      ]
     },
-      {
-        "group": "customer",
-        "pages": [
-          "api-docs/customer/customer-add-note",
-          "api-docs/customer/customer-add-tag",
-          "api-docs/customer/customer-get-customer",
-          "api-docs/customer/customer-get-customers",
-          "api-docs/customer/customer-remove-tag"
-        ]
-      },
-      {
-        "group": "cycle_count",
-        "pages": [
-          "api-docs/cycle_count/cycle-count-get",
-          "api-docs/cycle_count/cycle-count-get-all"
-        ]
-      },
-      {
-        "group": "distributor",
-        "pages": [
-          "api-docs/distributor/distributor-add-item",
-          "api-docs/distributor/distributor-create",
-          "api-docs/distributor/distributor-edit-item",
-          "api-docs/distributor/distributor-get",
-          "api-docs/distributor/distributor-remove-item",
-          "api-docs/distributor/distributor-update"
-        ]
-      },
-      {
-        "group": "inventory",
-        "pages": [
-          "api-docs/inventory/inventory-bulk-reconciliation",
-          "api-docs/inventory/inventory-decrease-on-hand",
-          "api-docs/inventory/inventory-deduct-serial-numbers",
-          "api-docs/inventory/inventory-get",
-          "api-docs/inventory/inventory-get-grouped-locations-map",
-          "api-docs/inventory/inventory-get-history",
-          "api-docs/inventory/inventory-get-inventory-history",
-          "api-docs/inventory/inventory-get-item-free",
-          "api-docs/inventory/inventory-get-items",
-          "api-docs/inventory/inventory-get-items-and-kits-map",
-          "api-docs/inventory/inventory-get-items-incoming",
-          "api-docs/inventory/inventory-get-items-map",
-          "api-docs/inventory/inventory-get-kits-map",
-          "api-docs/inventory/inventory-get-on-hand-location-map",
-          "api-docs/inventory/inventory-get-received-history",
-          "api-docs/inventory/inventory-get-reserved-map",
-          "api-docs/inventory/inventory-get-via-post-reserved-map",
-          "api-docs/inventory/inventory-increase-on-hand",
-          "api-docs/inventory/inventory-upsert"
-        ]
-      },
-      {
-        "group": "inventory_table",
-        "pages": [
-          "api-docs/inventory_table/inventory-inventory-table-build-po-rows",
-          "api-docs/inventory_table/inventory-inventory-table-build-reconcile-rows",
-          "api-docs/inventory_table/inventory-inventory-table-build-rows",
-          "api-docs/inventory_table/inventory-inventory-table-build-to-rows",
-          "api-docs/inventory_table/inventory-inventory-table-build-velocity-rows"
-        ]
-      },
-      {
-        "group": "item",
-        "pages": [
-          "api-docs/item/item-add-barcode",
-          "api-docs/item/item-add-custom-field",
-          "api-docs/item/item-add-serial-numbers",
-          "api-docs/item/item-add-tag",
-          "api-docs/item/item-bulk-assign",
-          "api-docs/item/item-bulk-upsert",
-          "api-docs/item/item-create",
-          "api-docs/item/item-create-upsert",
-          "api-docs/item/item-find-by-barcode",
-          "api-docs/item/item-get",
-          "api-docs/item/item-get-locations",
-          "api-docs/item/item-new-remove-serial-number",
-          "api-docs/item/item-remove",
-          "api-docs/item/item-remove-barcode",
-          "api-docs/item/item-remove-custom-field",
-          "api-docs/item/item-remove-serial-number",
-          "api-docs/item/item-remove-tag",
-          "api-docs/item/item-set-tags",
-          "api-docs/item/item-update",
-          "api-docs/item/item-update-alias-locations",
-          "api-docs/item/item-upsert",
-          "api-docs/item/job-item-bulk-remove"
-        ]
-      },
-      {
-        "group": "kit",
-        "pages": [
-          "api-docs/kit/kit-add-barcode",
-          "api-docs/kit/kit-add-custom-field",
-          "api-docs/kit/kit-add-item",
-          "api-docs/kit/kit-add-tag",
-          "api-docs/kit/kit-create",
-          "api-docs/kit/kit-edit-item",
-          "api-docs/kit/kit-get",
-          "api-docs/kit/kit-remove",
-          "api-docs/kit/kit-remove-barcode",
-          "api-docs/kit/kit-remove-custom-field",
-          "api-docs/kit/kit-remove-item",
-          "api-docs/kit/kit-remove-tag",
-          "api-docs/kit/kit-set-tags",
-          "api-docs/kit/kit-update"
-        ]
-      },
-      {
-        "group": "listing",
-        "pages": [
-          "api-docs/listing/listing-get",
-          "api-docs/listing/job-listing-listing-links-csv-import",
-          "api-docs/listing/job-listing-rules-csv-import"
-        ]
-      },
-      {
-        "group": "location",
-        "pages": [
-          "api-docs/location/location-add-item",
-          "api-docs/location/location-create",
-          "api-docs/location/location-get",
-          "api-docs/location/location-get-all",
-          "api-docs/location/location-get-items",
-          "api-docs/location/location-get-list",
-          "api-docs/location/location-remove-item"
-        ]
-      },
-      {
-        "group": "oauth",
-        "pages": [
-          "api-docs/oauth/oauth-token",
-          "api-docs/oauth/oauth-user-info"
-        ]
-      },
-      {
-        "group": "order",
-        "pages": [
-          "api-docs/order/order-add",
-          "api-docs/order/order-add-manual-shipment",
-          "api-docs/order/order-add-note",
-          "api-docs/order/order-add-tag",
-          "api-docs/order/order-add-tag-by-name",
-          "api-docs/order/order-bulk-add-manual-shipments",
-          "api-docs/order/order-get",
-          "api-docs/order/order-get-all",
-          "api-docs/order/order-get-archived",
-          "api-docs/order/order-get-by-base-order-number",
-          "api-docs/order/order-get-customs-information",
-          "api-docs/order/order-get-scanned-serial-numbers",
-          "api-docs/order/order-get-shipped",
-          "api-docs/order/order-get-single",
-          "api-docs/order/order-get-single-bulk",
-          "api-docs/order/order-get-skipped-scans",
-          "api-docs/order/order-get-unscanned-items",
-          "api-docs/order/order-modify-financial-status",
-          "api-docs/order/order-modify-status",
-          "api-docs/order/order-remove-tag",
-          "api-docs/order/order-set-tags",
-          "api-docs/order/order-status",
-          "api-docs/order/order-undershipped-item-report",
-          "api-docs/order/order-unscanned-order-list"
-        ]
-      },
-      {
-        "group": "purchase_order",
-        "pages": [
-          "api-docs/purchase_order/purchase-order-add-tag",
-          "api-docs/purchase_order/purchase-order-bulk-accept",
-          "api-docs/purchase_order/purchase-order-create",
-          "api-docs/purchase_order/purchase-order-create-v-2",
-          "api-docs/purchase_order/purchase-order-get",
-          "api-docs/purchase_order/purchase-order-get-by-status",
-          "api-docs/purchase_order/purchase-order-get-closed",
-          "api-docs/purchase_order/purchase-order-get-closed-with-items",
-          "api-docs/purchase_order/purchase-order-get-processing",
-          "api-docs/purchase_order/purchase-order-get-processing-with-item-id",
-          "api-docs/purchase_order/purchase-order-get-processing-with-items",
-          "api-docs/purchase_order/purchase-order-get-single",
-          "api-docs/purchase_order/purchase-order-get-single-by-number",
-          "api-docs/purchase_order/purchase-order-new-create",
-          "api-docs/purchase_order/purchase-order-remove-tag",
-          "api-docs/purchase_order/purchase-order-set-tags"
-        ]
-      },
-      {
-        "group": "run",
-        "pages": [
-          "api-docs/run/run-sync"
-        ]
-      },
-      {
-        "group": "shipments",
-        "pages": [
-          "api-docs/shipments/shipments-get",
-          "api-docs/shipments/shipments-get-by-range",
-          "api-docs/shipments/job-shipments-csv-export"
-        ]
-      },
-      {
-        "group": "shipping",
-        "pages": [
-          "api-docs/shipping/ship-shipping-restore-inventory",
-          "api-docs/shipping/ship-shipping-void"
-        ]
-      },
-      {
-        "group": "store",
-        "pages": [
-          "api-docs/store/store-get"
-        ]
-      },
-      {
-        "group": "tag",
-        "pages": [
-          "api-docs/tag/tag-add",
-          "api-docs/tag/tag-get",
-          "api-docs/tag/tag-remove",
-          "api-docs/tag/tag-update"
-        ]
-      },
-      {
-        "group": "transfer_order",
-        "pages": [
-          "api-docs/transfer_order/transfer-order-create",
-          "api-docs/transfer_order/transfer-order-get",
-          "api-docs/transfer_order/transfer-order-get-all"
-        ]
-      },
-      {
-        "group": "warehouse",
-        "pages": [
-          "api-docs/warehouse/warehouse-create",
-          "api-docs/warehouse/warehouse-get",
-          "api-docs/warehouse/warehouse-stats"
-        ]
-      }
-
+    {
+      "group": "Inventory",
+      "pages": [
+        "api-docs/inventory/inventory--bulk-reconciliation",
+        "api-docs/inventory/inventory--decrease-on-hand",
+        "api-docs/inventory/inventory--deduct-serial-numbers",
+        "api-docs/inventory/inventory--get-grouped-locations-map",
+        "api-docs/inventory/inventory--get-history",
+        "api-docs/inventory/inventory--get-inventory-history",
+        "api-docs/inventory/inventory--get-item-free",
+        "api-docs/inventory/inventory--get-items-and-kits-map",
+        "api-docs/inventory/inventory--get-items-incoming",
+        "api-docs/inventory/inventory--get-items-map",
+        "api-docs/inventory/inventory--get-items",
+        "api-docs/inventory/inventory--get-kits-map",
+        "api-docs/inventory/inventory--get-on-hand-location-map",
+        "api-docs/inventory/inventory--get-received-history",
+        "api-docs/inventory/inventory--get-reserved-map",
+        "api-docs/inventory/inventory--get-via-post-reserved-map",
+        "api-docs/inventory/inventory--get",
+        "api-docs/inventory/inventory--increase-on-hand",
+        "api-docs/inventory/inventory--upsert"
+      ]
+    },
+    {
+      "group": "Inventory Table",
+      "pages": [
+        "api-docs/inventory_table/inventory-table--build-po-rows",
+        "api-docs/inventory_table/inventory-table--build-reconcile-rows",
+        "api-docs/inventory_table/inventory-table--build-rows",
+        "api-docs/inventory_table/inventory-table--build-to-rows",
+        "api-docs/inventory_table/inventory-table--build-velocity-rows"
+      ]
+    },
+    {
+      "group": "Item",
+      "pages": [
+        "api-docs/item/item--add-barcode",
+        "api-docs/item/item--add-custom-field",
+        "api-docs/item/item--add-serial-numbers",
+        "api-docs/item/item--add-tag",
+        "api-docs/item/item--bulk-assign",
+        "api-docs/item/item--bulk-remove",
+        "api-docs/item/item--bulk-upsert",
+        "api-docs/item/item--create-upsert",
+        "api-docs/item/item--create",
+        "api-docs/item/item--find-by-barcode",
+        "api-docs/item/item--get-locations",
+        "api-docs/item/item--get",
+        "api-docs/item/item--new-remove-serial-number",
+        "api-docs/item/item--remove-barcode",
+        "api-docs/item/item--remove-custom-field",
+        "api-docs/item/item--remove-serial-number",
+        "api-docs/item/item--remove-tag",
+        "api-docs/item/item--remove",
+        "api-docs/item/item--set-tags",
+        "api-docs/item/item--update-alias-locations",
+        "api-docs/item/item--update",
+        "api-docs/item/item--upsert"
+      ]
+    },
+    {
+      "group": "Kit",
+      "pages": [
+        "api-docs/kit/kit--add-barcode",
+        "api-docs/kit/kit--add-custom-field",
+        "api-docs/kit/kit--add-item",
+        "api-docs/kit/kit--add-tag",
+        "api-docs/kit/kit--create",
+        "api-docs/kit/kit--edit-item",
+        "api-docs/kit/kit--get",
+        "api-docs/kit/kit--remove-barcode",
+        "api-docs/kit/kit--remove-custom-field",
+        "api-docs/kit/kit--remove-item",
+        "api-docs/kit/kit--remove-tag",
+        "api-docs/kit/kit--remove",
+        "api-docs/kit/kit--set-tags",
+        "api-docs/kit/kit--update"
+      ]
+    },
+    {
+      "group": "Listing",
+      "pages": [
+        "api-docs/listing/listing--get",
+        "api-docs/listing/listing--listing-links-csv-import",
+        "api-docs/listing/listing--rules-csv-import"
+      ]
+    },
+    {
+      "group": "Location",
+      "pages": [
+        "api-docs/location/location--add-item",
+        "api-docs/location/location--create",
+        "api-docs/location/location--get-all",
+        "api-docs/location/location--get-items",
+        "api-docs/location/location--get-list",
+        "api-docs/location/location--get",
+        "api-docs/location/location--remove-item"
+      ]
+    },
+    {
+      "group": "OAuth",
+      "pages": [
+        "api-docs/oauth/oauth--token",
+        "api-docs/oauth/oauth--user-info"
+      ]
+    },
+    {
+      "group": "Order",
+      "pages": [
+        "api-docs/order/order--add-manual-shipment",
+        "api-docs/order/order--add-note",
+        "api-docs/order/order--add-tag-by-name",
+        "api-docs/order/order--add-tag",
+        "api-docs/order/order--add",
+        "api-docs/order/order--bulk-add-manual-shipments",
+        "api-docs/order/order--get-all",
+        "api-docs/order/order--get-archived",
+        "api-docs/order/order--get-by-base-order-number",
+        "api-docs/order/order--get-customs-information",
+        "api-docs/order/order--get-scanned-serial-numbers",
+        "api-docs/order/order--get-shipped",
+        "api-docs/order/order--get-single-bulk",
+        "api-docs/order/order--get-single",
+        "api-docs/order/order--get-skipped-scans",
+        "api-docs/order/order--get-unscanned-items",
+        "api-docs/order/order--get",
+        "api-docs/order/order--modify-financial-status",
+        "api-docs/order/order--modify-status",
+        "api-docs/order/order--remove-tag",
+        "api-docs/order/order--set-tags",
+        "api-docs/order/order--status",
+        "api-docs/order/order--undershipped-item-report",
+        "api-docs/order/order--unscanned-order-list"
+      ]
+    },
+    {
+      "group": "Purchase Order",
+      "pages": [
+        "api-docs/purchase_order/purchase-order--add-tag",
+        "api-docs/purchase_order/purchase-order--bulk-accept",
+        "api-docs/purchase_order/purchase-order--create-v-2",
+        "api-docs/purchase_order/purchase-order--create",
+        "api-docs/purchase_order/purchase-order--get-by-status",
+        "api-docs/purchase_order/purchase-order--get-closed-with-items",
+        "api-docs/purchase_order/purchase-order--get-closed",
+        "api-docs/purchase_order/purchase-order--get-processing-with-item-id",
+        "api-docs/purchase_order/purchase-order--get-processing-with-items",
+        "api-docs/purchase_order/purchase-order--get-processing",
+        "api-docs/purchase_order/purchase-order--get-single-by-number",
+        "api-docs/purchase_order/purchase-order--get-single",
+        "api-docs/purchase_order/purchase-order--get",
+        "api-docs/purchase_order/purchase-order--new-create",
+        "api-docs/purchase_order/purchase-order--remove-tag",
+        "api-docs/purchase_order/purchase-order--set-tags"
+      ]
+    },
+    {
+      "group": "Run",
+      "pages": [
+        "api-docs/run/run--sync"
+      ]
+    },
+    {
+      "group": "Shipments",
+      "pages": [
+        "api-docs/shipments/shipments--csv-export",
+        "api-docs/shipments/shipments--get-by-range",
+        "api-docs/shipments/shipments--get"
+      ]
+    },
+    {
+      "group": "Shipping",
+      "pages": [
+        "api-docs/shipping/shipping--restore-inventory",
+        "api-docs/shipping/shipping--void"
+      ]
+    },
+    {
+      "group": "Store",
+      "pages": [
+        "api-docs/store/store--get"
+      ]
+    },
+    {
+      "group": "Tag",
+      "pages": [
+        "api-docs/tag/tag--add",
+        "api-docs/tag/tag--get",
+        "api-docs/tag/tag--remove",
+        "api-docs/tag/tag--update"
+      ]
+    },
+    {
+      "group": "Transfer Order",
+      "pages": [
+        "api-docs/transfer_order/transfer-order--create",
+        "api-docs/transfer_order/transfer-order--get-all",
+        "api-docs/transfer_order/transfer-order--get"
+      ]
+    },
+    {
+      "group": "Warehouse",
+      "pages": [
+        "api-docs/warehouse/warehouse--create",
+        "api-docs/warehouse/warehouse--get",
+        "api-docs/warehouse/warehouse--stats"
+      ]
+    }
   ],
   "footerSocials": {
     "x": "https://twitter.com/skulabs",

@@ -5,6 +5,7 @@
   "dependencies": {
     "gulp": "^5.0.0",
     "gulp-rimraf": "^1.0.0",
-    "gulp-shell": "^0.8.0"
+    "gulp-shell": "^0.8.0",
+    "lodash": "^4.17.21"
   }
 }
