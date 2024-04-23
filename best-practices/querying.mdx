@@ -3,3 +3,120 @@ title: "Querying Data"
 description: "How to query data with the SKULabs API"
 icon: "magnifying-glass"
 ---
+
+
+The SKULabs API presents MongoDB-like querying capabilities. This allows you to filter and sort data to retrieve only the information you need.
+
+## Required Parameters
+
+<Note>To query against SKULabs collections, 4 parameters are required. We've included them below.</Note>
+
+* selector
+* sort
+* limit
+* skip
+
+### Example
+
+```json
+{
+  "selector": {
+    "status": {
+      "$in": ["shipped"]
+    }
+  },
+  "sort": {
+    "end_date": -1
+  },
+  "skip": 0,
+  "limit": 10
+}
+```
+
+## Selector
+
+<Note>Use the selector field to help filter queries. Commonly available fields are included below.</Note>
+
+### Common Fields
+
+* name
+* sku
+* email
+* upc
+* start_date
+* end_date
+* items
+* listings
+* custom_fields
+* barcodes
+* listing_sku
+* tags
+* fulfillment_sku
+* variants
+* status
+* type
+* batch_number
+* provider
+* order_number
+* service
+* tracking_number
+
+### Example
+
+```json
+{
+    "sku": "red-shirt-001"
+}
+```
+
+## Sort
+
+<Note>Use the sort field to help sort returned documents. Commonly available fields are included below.</Note>
+
+### Common Fields
+
+* name
+* email
+* sku
+* upc
+* type
+* store_id
+* listing_sku
+* fulfillment_sku
+* order_number
+* status
+* batch_number
+* date
+
+### Example
+
+```json
+{
+    "end_date": 1,
+}
+```
+
+## Limit
+
+<Note>Limit represents an integer that is used to limit the number of documents returned. By default, it is 10.</Note>
+
+### Example
+
+```json
+{
+    "limit": 10
+}
+```
+
+## Skip
+
+
+<Note>Skip represents an integer that is used to aid in pagination. By default, it is 0.</Note>
+
+### Example
+
+```json
+{
+    "skip": 0
+}
+```
