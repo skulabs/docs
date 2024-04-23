@@ -70,3 +70,28 @@ Slow down your request rate to the API and respect the rate limits that are docu
 - **What should I do?**
 
 This error is typically a problem on the server side, not an issue with your request. Wait a few moments and then resend your request. If the problem persists, contact SKULabs support for assistance.
+
+## Retryable endpoints
+
+For any retryable endpoint, pass a "Retry-Token" parameter with a unique and random MongoDB ObjectID.
+
+## 202 - Accepted
+
+- **What does it mean?**
+
+<Note>Your request was received but not yet processed.</Note>
+
+- **What should I do?**
+
+Please check back at URI provided in the response error.data.retryUrl (/retryable/get?retry_token=X) for the completed request.
+
+## 203 - Non-authoritative Information
+
+- **What does it mean?**
+
+<Note>This is a saved response from the original request, meaning it may not be up-to-date.</Note>
+
+- **What should I do?**
+
+
+With this response code, you should be aware that the information provided in the response might not be the most up-to-date or accurate representation of the resource, and further verification may be necessary.
