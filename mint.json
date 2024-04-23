@@ -94,8 +94,8 @@
         "api-docs/inventory/inventory--get-kits-map",
         "api-docs/inventory/inventory--get-on-hand-location-map",
         "api-docs/inventory/inventory--get-received-history",
+        "api-docs/inventory/inventory--get-reserved-map-1",
         "api-docs/inventory/inventory--get-reserved-map",
-        "api-docs/inventory/inventory--get-via-post-reserved-map",
         "api-docs/inventory/inventory--get",
         "api-docs/inventory/inventory--increase-on-hand",
         "api-docs/inventory/inventory--upsert"
