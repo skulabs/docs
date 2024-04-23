@@ -35,14 +35,14 @@
   ],
   "navigation": [
     {
-
       "group": "Getting Started",
       "pages": [
         "getting-started/getting-an-api-key",
         "getting-started/authentication",
         "getting-started/your-first-api-call"
       ]
-    },{
+    },
+    {
       "group": "Best Practices",
       "pages": [
         "best-practices/handling-status-codes",
@@ -99,16 +99,6 @@
         "api-docs/inventory/inventory--get",
         "api-docs/inventory/inventory--increase-on-hand",
         "api-docs/inventory/inventory--upsert"
-      ]
-    },
-    {
-      "group": "Inventory Table",
-      "pages": [
-        "api-docs/inventory_table/inventory-table--build-po-rows",
-        "api-docs/inventory_table/inventory-table--build-reconcile-rows",
-        "api-docs/inventory_table/inventory-table--build-rows",
-        "api-docs/inventory_table/inventory-table--build-to-rows",
-        "api-docs/inventory_table/inventory-table--build-velocity-rows"
       ]
     },
     {
@@ -178,13 +168,6 @@
       ]
     },
     {
-      "group": "OAuth",
-      "pages": [
-        "api-docs/oauth/oauth--token",
-        "api-docs/oauth/oauth--user-info"
-      ]
-    },
-    {
       "group": "Order",
       "pages": [
         "api-docs/order/order--add-manual-shipment",
@@ -235,12 +218,6 @@
       ]
     },
     {
-      "group": "Run",
-      "pages": [
-        "api-docs/run/run--sync"
-      ]
-    },
-    {
       "group": "Shipments",
       "pages": [
         "api-docs/shipments/shipments--csv-export",
@@ -284,6 +261,13 @@
         "api-docs/warehouse/warehouse--create",
         "api-docs/warehouse/warehouse--get",
         "api-docs/warehouse/warehouse--stats"
+      ]
+    },
+    {
+      "group": "Webhook",
+      "pages": [
+        "api-docs/webhook/webhook--add-handler",
+        "api-docs/webhook/webhook--remove-handler"
       ]
     }
   ],
