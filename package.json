@@ -1,5 +1,6 @@
 {
   "scripts": {
+    "build": "gulp",
     "dev": "mintlify dev"
   },
   "dependencies": {
