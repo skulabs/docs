@@ -5,7 +5,45 @@ const gulp = require('gulp');
 const rimraf = require('gulp-rimraf');
 const shell = require('gulp-shell');
 const path = require('path');
+const axios = require('axios');
+const yargs = require('yargs').argv;
 const fs = require('fs');
+
+function sortObjectsByGroup(objects) {
+  const order = [
+    "Webhook",
+    "Shipments",
+    "Item",
+    "Kit",
+    "Warehouse",
+    "Location",
+    "Purchase Order",
+    "Transfer Order",
+    "Order",
+    "Customer"
+  ];
+
+  return objects.sort((a, b) => {
+    const indexA = order.indexOf(a.group);
+    const indexB = order.indexOf(b.group);
+
+    // If both groups are in the order array, sort them accordingly
+    if (indexA !== -1 && indexB !== -1) {
+      return indexA - indexB;
+    }
+
+    // If only one group is in the order array, it should come first
+    if (indexA !== -1) {
+      return -1;
+    }
+    if (indexB !== -1) {
+      return 1;
+    }
+
+    // If neither group is in the order array, keep their original order
+    return 0;
+  });
+}
 
 gulp.task('clean', function () {
   return gulp.src(['./api-docs/*', '!./api-docs/overview.mdx'], { read: false })
@@ -50,7 +88,11 @@ gulp.task('fix_json', function (cb) {
   const mint = JSON.parse(mint_json);
 
   // Build the array
-  const array_by_files = buildArray(path.join(__dirname, 'api-docs'));
+  let array_by_files = buildArray(path.join(__dirname, 'api-docs'));
+
+  // sort the array
+  array_by_files = sortObjectsByGroup(array_by_files);
+
   mint.navigation = mint.navigation.filter((nav) => {
     var has_pages = nav.pages.filter(p => !p.match(/^api-docs\//gi));
     return !nav.pages || (nav?.pages && Array.isArray(nav.pages) && has_pages.length > 0);
@@ -63,10 +105,43 @@ gulp.task('fix_json', function (cb) {
   cb();
 });
 
+gulp.task('fetch', async function (cb) {
+  let url = ''; // default to production
+
+  switch (yargs.env) {
+    case 'next':
+      url = 'https://api-next.skulabs.com/openapi';
+      break;
+
+    case 'dev':
+      url = 'http://localhost:3001/s/api/openapi';
+      break;
+
+    case 'production':
+    default:
+      url = 'https://api.skulabs.com/openapi';
+      break;
+  }
+
+  console.log(`🔗 Fetching OpenAPI from: ${url}`);
+
+  const response = await axios.get(url);
+
+  if (response.data?.openapi) {
+    console.log('✅ Valid OpenAPI response received');
+  } else {
+    console.error('❌ Invalid OpenAPI response received');
+    throw Error('Validate that the OpenAPI response is correct.');
+  }
+
+  fs.writeFileSync(path.join(__dirname, './openapi.json'), JSON.stringify(response.data, null, 2));
+  cb();
+});
+
 gulp.task('watch', function () {
   gulp.watch(['openapi.json'], gulp.series('clean', 'generate', 'fix_json'));
 });
 
-gulp.task('default', gulp.series('clean', 'generate', 'fix_json'));
+gulp.task('default', gulp.series('fetch', 'clean', 'generate', 'fix_json'));
 
 }
