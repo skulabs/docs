@@ -59,7 +59,6 @@
     {
       "group": "Shipments",
       "pages": [
-        "api-docs/shipments/shipments--csv-export",
         "api-docs/shipments/shipments--get-by-range",
         "api-docs/shipments/shipments--get"
       ]
@@ -72,7 +71,6 @@
         "api-docs/item/item--add-serial-numbers",
         "api-docs/item/item--add-tag",
         "api-docs/item/item--bulk-assign",
-        "api-docs/item/item--bulk-remove",
         "api-docs/item/item--bulk-upsert",
         "api-docs/item/item--create-upsert",
         "api-docs/item/item--create",
@@ -243,16 +241,7 @@
     {
       "group": "Listing",
       "pages": [
-        "api-docs/listing/listing--get",
-        "api-docs/listing/listing--listing-links-csv-import",
-        "api-docs/listing/listing--rules-csv-import"
-      ]
-    },
-    {
-      "group": "Shipping",
-      "pages": [
-        "api-docs/shipping/shipping--restore-inventory",
-        "api-docs/shipping/shipping--void"
+        "api-docs/listing/listing--get"
       ]
     },
     {
