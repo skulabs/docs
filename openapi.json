@@ -5120,6 +5120,57 @@
         }
       }
     },
+    "/order/override": {
+      "put": {
+        "description": "/order/override",
+        "summary": "Order - Override",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "store_id": {
+                    "type": "string"
+                  },
+                  "order_number": {
+                    "type": "string"
+                  },
+                  "stash": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "SKULabsToken": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://api.skulabs.com"
+          }
+        ],
+        "tags": [
+          "order"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Malformed request. Check that you have the correct parameters and that they are formatted correctly."
+          },
+          "401": {
+            "description": "Unauthorized. Did you forget to include your API key?"
+          }
+        }
+      }
+    },
     "/order/remove_tag": {
       "delete": {
         "description": "/order/remove_tag",
@@ -5146,6 +5197,54 @@
                     }
                   },
                   "tag_id": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "SKULabsToken": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://api.skulabs.com"
+          }
+        ],
+        "tags": [
+          "order"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Malformed request. Check that you have the correct parameters and that they are formatted correctly."
+          },
+          "401": {
+            "description": "Unauthorized. Did you forget to include your API key?"
+          }
+        }
+      }
+    },
+    "/order/revert": {
+      "put": {
+        "description": "/order/revert",
+        "summary": "Order - Revert",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "store_id": {
+                    "type": "string"
+                  },
+                  "order_number": {
                     "type": "string"
                   }
                 }
