@@ -68,13 +68,35 @@ gulp.task('fix_json', function (cb) {
           return;
         }
 
+        // make the directory names pretty
+        // prefer dashes over underscores
+        if (dir.match(/_/g)) {
+          fs.renameSync(path.join(directoryPath, dir), path.join(directoryPath, dir.replace(/_/g, '-')));
+          dir = dir.replace(/_/g, '-');
+        }
+
         // Read files within the directory
         const files = fs.readdirSync(path.join(directoryPath, dir));
 
         // Filter out non-directories and build pages array
         const pages = files
           .filter((file) => fs.statSync(path.join(directoryPath, dir, file)).isFile())
-          .map((file) => path.join('api-docs', dir, path.parse(file).name));
+          .map((file) => {
+
+            // if mintlify cli gave us an ugly filename
+            // try and make it pretty
+            let filename = file;
+            let split_filename = filename.split('--');
+
+            // this is definitely not pretty but it gets the job done
+            // just really covers the "Page - Route Name" case
+            if (split_filename.length > 1) {
+              fs.renameSync(path.join('api-docs', dir, file), path.join(directoryPath, dir, split_filename[ split_filename.length - 1]));
+              filename = split_filename[1];
+            }
+
+            return path.join('api-docs', dir, path.parse(filename).name);
+          });
 
         // Add group and pages to result array
         result.push({ group, pages });
@@ -101,6 +123,22 @@ gulp.task('fix_json', function (cb) {
   mint.navigation = mint.navigation.concat(array_by_files);
 
   fs.writeFileSync(path.join(__dirname, 'mint.json'), JSON.stringify(mint, null, 2));
+
+  cb();
+});
+
+gulp.task('change-last-updated', async function (cb) {
+
+  const currentDate = new Date();
+
+  const options = { month: 'long', day: 'numeric', year: 'numeric' };
+  const formattedDate = currentDate.toLocaleString('en-US', options);
+
+  const component_code = `export const LastUpdated = ({}) => (
+      <div>Our API docs were last updated on ${formattedDate}.</div>
+  );`;
+
+  fs.writeFileSync(path.join(__dirname, './snippets/LastUpdated.mdx'), component_code);
 
   cb();
 });
@@ -142,6 +180,6 @@ gulp.task('watch', function () {
   gulp.watch(['openapi.json'], gulp.series('clean', 'generate', 'fix_json'));
 });
 
-gulp.task('default', gulp.series('fetch', 'clean', 'generate', 'fix_json'));
+gulp.task('default', gulp.series('fetch', 'clean', 'generate', 'change-last-updated', 'fix_json'));
 
 }
