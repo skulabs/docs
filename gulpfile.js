@@ -52,11 +52,6 @@ gulp.task('clean', function () {
 
 gulp.task('generate', shell.task('npx @mintlify/scraping@latest openapi-file openapi.json -o api-docs'));
 
-gulp.task('rename_files', function (cb) {
-
-  cb();
-});
-
 gulp.task('fix_json', function (cb) {
   // Function to read directory and build array
   function buildArray(directoryPath) {
@@ -73,6 +68,8 @@ gulp.task('fix_json', function (cb) {
           return;
         }
 
+        // make the directory names pretty
+        // prefer dashes over underscores
         if (dir.match(/_/g)) {
           fs.renameSync(path.join(directoryPath, dir), path.join(directoryPath, dir.replace(/_/g, '-')));
           dir = dir.replace(/_/g, '-');
