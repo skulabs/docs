@@ -6,7 +6,7 @@ Once you push the changes in this repo to the ```main``` branch, it will go live
 
 ### Pushing latest OpenAPI SKULabs Updates
 
-To get the latest changes you have a few options...
+To get the latest changes you have a few options... There is a quick build process that must take place after you update the OpenAPI spec on a given environment. The build process automatically generates mdx files and updates the mint.json file accordingly.
 
 #### npm run build
 
@@ -44,7 +44,11 @@ mintlify dev
 
 ### Publishing Changes to Production
 
-Install our Github App to autopropagate changes from youre repo to your deployment. Changes will be deployed to production automatically after pushing to the default branch. Find the link to install on your dashboard.
+_From Mintlify_
+
+Install the Mintlify GitHub App to autopropagate changes from youre repo to your deployment. Changes will be deployed to production automatically after pushing to the default branch. Find the link to install on your dashboard.
+
+(Note: this is already done, but right now only @DevBrent can push changes.)
 
 #### Troubleshooting
 
