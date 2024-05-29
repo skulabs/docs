@@ -127,6 +127,22 @@ gulp.task('fix_json', function (cb) {
   cb();
 });
 
+gulp.task('change-last-updated', async function (cb) {
+
+  const currentDate = new Date();
+
+  const options = { month: 'long', day: 'numeric', year: 'numeric' };
+  const formattedDate = currentDate.toLocaleString('en-US', options);
+
+  const component_code = `export const LastUpdated = ({}) => (
+      <div>Our API docs were last updated on ${formattedDate}.</div>
+  );`;
+
+  fs.writeFileSync(path.join(__dirname, './snippets/LastUpdated.mdx'), component_code);
+
+  cb();
+});
+
 gulp.task('fetch', async function (cb) {
   let url = ''; // default to production
 
@@ -164,6 +180,6 @@ gulp.task('watch', function () {
   gulp.watch(['openapi.json'], gulp.series('clean', 'generate', 'fix_json'));
 });
 
-gulp.task('default', gulp.series('fetch', 'clean', 'generate', 'fix_json'));
+gulp.task('default', gulp.series('fetch', 'clean', 'generate', 'change-last-updated', 'fix_json'));
 
 }
