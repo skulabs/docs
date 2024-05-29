@@ -52,6 +52,11 @@ gulp.task('clean', function () {
 
 gulp.task('generate', shell.task('npx @mintlify/scraping@latest openapi-file openapi.json -o api-docs'));
 
+gulp.task('rename_files', function (cb) {
+
+  cb();
+});
+
 gulp.task('fix_json', function (cb) {
   // Function to read directory and build array
   function buildArray(directoryPath) {
@@ -68,13 +73,33 @@ gulp.task('fix_json', function (cb) {
           return;
         }
 
+        if (dir.match(/_/g)) {
+          fs.renameSync(path.join(directoryPath, dir), path.join(directoryPath, dir.replace(/_/g, '-')));
+          dir = dir.replace(/_/g, '-');
+        }
+
         // Read files within the directory
         const files = fs.readdirSync(path.join(directoryPath, dir));
 
         // Filter out non-directories and build pages array
         const pages = files
           .filter((file) => fs.statSync(path.join(directoryPath, dir, file)).isFile())
-          .map((file) => path.join('api-docs', dir, path.parse(file).name));
+          .map((file) => {
+
+            // if mintlify cli gave us an ugly filename
+            // try and make it pretty
+            let filename = file;
+            let split_filename = filename.split('--');
+
+            // this is definitely not pretty but it gets the job done
+            // just really covers the "Page - Route Name" case
+            if (split_filename.length > 1) {
+              fs.renameSync(path.join('api-docs', dir, file), path.join(directoryPath, dir, split_filename[1]));
+              filename = split_filename[1];
+            }
+
+            return path.join('api-docs', dir, path.parse(filename).name);
+          });
 
         // Add group and pages to result array
         result.push({ group, pages });
