@@ -1,14 +1,32 @@
-# Mintlify Starter Kit 2.0 Remixed 5
+# SKULabs Docs powered by Mintlify
 
-Click on `Use this template` to copy the Mintlify starter kit. The starter kit contains examples including
+### Warning 🚨
 
-- Guide pages
-- Navigation
-- Customizations
-- API Reference pages
-- Use of popular components
+Once you push the changes in this repo to the ```main``` branch, it will go live to production at https://skulabs.com/api ... so be careful!
 
-### Development
+### Pushing latest OpenAPI SKULabs Updates
+
+To get the latest changes you have a few options...
+
+#### npm run build
+
+This builds against https://api.skulabs.com/openapi
+
+#### npm run build_next
+
+This builds against https://api-next.skulabs.com/openapi
+
+#### npm run build_local
+
+This builds against http://localhost:3001/s/api/openapi
+
+### Previewing Changes Locally
+
+Once you run the build, you can preview the changes. ```mintlify dev``` is the easiest way to view your changes.
+
+Here's how to get started with the mintlify CLI...
+
+#### Install the CLI
 
 Install the [Mintlify CLI](https://www.npmjs.com/package/mintlify) to preview the documentation changes locally. To install, use the following command
 
@@ -16,15 +34,17 @@ Install the [Mintlify CLI](https://www.npmjs.com/package/mintlify) to preview th
 npm i -g mintlify
 ```
 
-Run the following command at the root of your documentation (where mint.json is)
+#### Run the command
+
+Run the following command at the root of your documentation (where mint.json is). It will give you the URL that you can view the changes locally
 
 ```
 mintlify dev
 ```
 
-### Publishing Changes
+### Publishing Changes to Production
 
-Install our Github App to autopropagate changes from youre repo to your deployment. Changes will be deployed to production automatically after pushing to the default branch. Find the link to install on your dashboard. 
+Install our Github App to autopropagate changes from youre repo to your deployment. Changes will be deployed to production automatically after pushing to the default branch. Find the link to install on your dashboard.
 
 #### Troubleshooting
 

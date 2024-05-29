@@ -1,7 +1,10 @@
 {
   "scripts": {
     "build": "gulp",
-    "dev": "mintlify dev"
+    "dev": "mintlify dev",
+    "build": "gulp",
+    "build_next": "gulp --env=next",
+    "build_local": "gulp --env=dev"
   },
   "dependencies": {
     "axios": "^1.6.8",
