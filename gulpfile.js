@@ -91,7 +91,7 @@ gulp.task('fix_json', function (cb) {
             // this is definitely not pretty but it gets the job done
             // just really covers the "Page - Route Name" case
             if (split_filename.length > 1) {
-              fs.renameSync(path.join('api-docs', dir, file), path.join(directoryPath, dir, split_filename[1]));
+              fs.renameSync(path.join('api-docs', dir, file), path.join(directoryPath, dir, split_filename[ split_filename.length - 1]));
               filename = split_filename[1];
             }
 
