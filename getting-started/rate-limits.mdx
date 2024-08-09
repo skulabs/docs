@@ -1,0 +1,33 @@
+---
+title: 'Rate Limits'
+description: 'Making use of your rate limits'
+icon: 'shield'
+---
+
+SKULabs enforces several bucket-based rate limits that you may encounter while using our API. Additionally, some endpoints have special rate limits or account-level locks to prevent abuse of bulk endpoints.
+
+### Per-api-key limits
+You are limited to 2 requests per second per API key.
+
+## Per-account limits
+You are limited to your plan's associated rate limit, broken up into hourly buckets. As of August 2024:
+* Basic - 1000/day
+* Premium - 100 000/day
+* Enterprise - 300 000/day
+* Enterprise 2X (Paid) - 600 000/day
+* Enterprise 4X (Paid) - 1 200 000/day
+
+## Endpoint limits
+It is rare, but certain endpoints have custom rate limits, you may need to dynamically wait in these cases.
+
+## Endpoint locks
+Some endpoints have locks that prevent multiple requests from being processed simultaneously by API for the entire account. These are typically actions like bulk_reconcile, bulk_delete, or bulk_receive. You should queue and wait for each request to finish or implement an exponential fallback algorithm and resubmit your requests until you receive a 200, 202, or 203 status code.
+
+## Dynamically waiting for rate limit resets.
+If your 429 error contains an error object, you can wait `error.data.wait_seconds` seconds for your rate limit bucket to reset.
+```
+{ "error": { "message": "Rate limited. You are allowed etc...", data: { "wait_seconds": 8 } } }
+```
+
+
+<Tip>This number can be up to an hour or longer. Do not arbitrarily sleep your program in response to this error.</Tip>
