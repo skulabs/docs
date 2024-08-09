@@ -47,7 +47,8 @@
       "group": "Best Practices",
       "pages": [
         "best-practices/handling-status-codes",
-        "best-practices/querying"
+        "best-practices/querying",
+        "best-practices/rules"
       ]
     },
     {
