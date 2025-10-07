@@ -2,7 +2,6 @@
   "scripts": {
     "build": "gulp",
     "dev": "mintlify dev",
-    "build": "gulp",
     "build_next": "gulp --env=next",
     "build_local": "gulp --env=dev"
   },

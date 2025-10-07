@@ -61,7 +61,6 @@
     {
       "group": "Shipments",
       "pages": [
-        "api-docs/shipments/csv-export",
         "api-docs/shipments/get-by-range",
         "api-docs/shipments/get"
       ]
@@ -74,7 +73,6 @@
         "api-docs/item/add-serial-numbers",
         "api-docs/item/add-tag",
         "api-docs/item/bulk-assign",
-        "api-docs/item/bulk-remove",
         "api-docs/item/bulk-upsert",
         "api-docs/item/create-upsert",
         "api-docs/item/create",
@@ -100,6 +98,7 @@
         "api-docs/kit/add-custom-field",
         "api-docs/kit/add-item",
         "api-docs/kit/add-tag",
+        "api-docs/kit/bulk-update",
         "api-docs/kit/create",
         "api-docs/kit/edit-item",
         "api-docs/kit/get",
@@ -115,6 +114,7 @@
     {
       "group": "Warehouse",
       "pages": [
+        "api-docs/warehouse/create-v-2",
         "api-docs/warehouse/create",
         "api-docs/warehouse/get",
         "api-docs/warehouse/stats"
@@ -203,6 +203,12 @@
       ]
     },
     {
+      "group": "Batch",
+      "pages": [
+        "api-docs/batch/get"
+      ]
+    },
+    {
       "group": "Cycle Count",
       "pages": [
         "api-docs/cycle-count/get-all",
@@ -213,6 +219,7 @@
       "group": "Distributor",
       "pages": [
         "api-docs/distributor/add-item",
+        "api-docs/distributor/bulk-remove-item",
         "api-docs/distributor/create",
         "api-docs/distributor/edit-item",
         "api-docs/distributor/get",
@@ -226,6 +233,7 @@
         "api-docs/inventory/bulk-reconciliation",
         "api-docs/inventory/decrease-on-hand",
         "api-docs/inventory/deduct-serial-numbers",
+        "api-docs/inventory/get-free-map",
         "api-docs/inventory/get-grouped-locations-map",
         "api-docs/inventory/get-history",
         "api-docs/inventory/get-inventory-history",
@@ -247,16 +255,15 @@
     {
       "group": "Listing",
       "pages": [
-        "api-docs/listing/get",
-        "api-docs/listing/listing-links-csv-import",
-        "api-docs/listing/rules-csv-import"
+        "api-docs/listing/get"
       ]
     },
     {
-      "group": "Shipping",
+      "group": "Run",
       "pages": [
-        "api-docs/shipping/restore-inventory",
-        "api-docs/shipping/void"
+        "api-docs/run/debug-request",
+        "api-docs/run/shopify-returns-cleanup",
+        "api-docs/run/shopify-returns-simulation"
       ]
     },
     {
