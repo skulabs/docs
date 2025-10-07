@@ -15,6 +15,9 @@
   ],
   "tags": [
     {
+      "name": "batch"
+    },
+    {
       "name": "customer"
     },
     {
@@ -25,9 +28,6 @@
     },
     {
       "name": "inventory"
-    },
-    {
-      "name": "inventory_table"
     },
     {
       "name": "item"
@@ -57,9 +57,6 @@
       "name": "shipments"
     },
     {
-      "name": "shipping"
-    },
-    {
       "name": "store"
     },
     {
@@ -76,6 +73,52 @@
     }
   ],
   "paths": {
+    "/batch/get": {
+      "get": {
+        "description": "/batch/get",
+        "summary": "Batch - Get",
+        "parameters": [
+          {
+            "name": "batch_id",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "batch_number",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "SKULabsToken": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://api.skulabs.com"
+          }
+        ],
+        "tags": [
+          "batch"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Malformed request. Check that you have the correct parameters and that they are formatted correctly."
+          },
+          "401": {
+            "description": "Unauthorized. Did you forget to include your API key?"
+          }
+        }
+      }
+    },
     "/customer/add_note": {
       "post": {
         "description": "/customer/add_note",
@@ -427,6 +470,57 @@
                 "properties": {
                   "data": {
                     "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "SKULabsToken": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://api.skulabs.com"
+          }
+        ],
+        "tags": [
+          "distributor"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Malformed request. Check that you have the correct parameters and that they are formatted correctly."
+          },
+          "401": {
+            "description": "Unauthorized. Did you forget to include your API key?"
+          }
+        }
+      }
+    },
+    "/distributor/bulk_remove_item": {
+      "delete": {
+        "description": "/distributor/bulk_remove_item",
+        "summary": "Distributor - Bulk Remove Item",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "item_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
                   }
                 }
               }
@@ -880,6 +974,55 @@
             "in": "query",
             "schema": {
               "type": "object"
+            }
+          }
+        ],
+        "security": [
+          {
+            "SKULabsToken": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://api.skulabs.com"
+          }
+        ],
+        "tags": [
+          "inventory"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Malformed request. Check that you have the correct parameters and that they are formatted correctly."
+          },
+          "401": {
+            "description": "Unauthorized. Did you forget to include your API key?"
+          }
+        }
+      }
+    },
+    "/inventory/get_free_map": {
+      "get": {
+        "description": "/inventory/get_free_map",
+        "summary": "Inventory - Get Free Map",
+        "parameters": [
+          {
+            "name": "items_ids",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "warehouse_ids",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
           }
         ],
@@ -1571,6 +1714,16 @@
                   },
                   "notes": {
                     "type": "string"
+                  },
+                  "no_invalidate": {
+                    "type": "string"
+                  },
+                  "lock_key": {
+                    "type": "string"
+                  },
+                  "alert": {
+                    "type": "number",
+                    "format": "integer"
                   }
                 }
               }
@@ -2761,54 +2914,6 @@
         }
       }
     },
-    "/s/job/item/bulk_remove": {
-      "delete": {
-        "description": "/s/job/item/bulk_remove",
-        "summary": "Item - Bulk Remove",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "item_ids": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "SKULabsToken": []
-          }
-        ],
-        "servers": [
-          {
-            "url": "https://app.skulabs.com"
-          }
-        ],
-        "tags": [
-          "item"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Malformed request. Check that you have the correct parameters and that they are formatted correctly."
-          },
-          "401": {
-            "description": "Unauthorized. Did you forget to include your API key?"
-          }
-        }
-      }
-    },
     "/kit/add_barcode": {
       "post": {
         "description": "/kit/add_barcode",
@@ -2982,6 +3087,51 @@
                     "type": "string"
                   },
                   "tag_id": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "SKULabsToken": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://api.skulabs.com"
+          }
+        ],
+        "tags": [
+          "kit"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Malformed request. Check that you have the correct parameters and that they are formatted correctly."
+          },
+          "401": {
+            "description": "Unauthorized. Did you forget to include your API key?"
+          }
+        }
+      }
+    },
+    "/kit/bulk_update": {
+      "put": {
+        "description": "/kit/bulk_update",
+        "summary": "Kit - Bulk Update",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "kits": {
                     "type": "string"
                   }
                 }
@@ -3558,96 +3708,6 @@
         "servers": [
           {
             "url": "https://api.skulabs.com"
-          }
-        ],
-        "tags": [
-          "listing"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Malformed request. Check that you have the correct parameters and that they are formatted correctly."
-          },
-          "401": {
-            "description": "Unauthorized. Did you forget to include your API key?"
-          }
-        }
-      }
-    },
-    "/s/job/listing/listing_links_csv_import": {
-      "post": {
-        "description": "/s/job/listing/listing_links_csv_import",
-        "summary": "Listing - Listing Links Csv Import",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "data": {
-                    "type": "object"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "SKULabsToken": []
-          }
-        ],
-        "servers": [
-          {
-            "url": "https://app.skulabs.com"
-          }
-        ],
-        "tags": [
-          "listing"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Malformed request. Check that you have the correct parameters and that they are formatted correctly."
-          },
-          "401": {
-            "description": "Unauthorized. Did you forget to include your API key?"
-          }
-        }
-      }
-    },
-    "/s/job/listing/rules_csv_import": {
-      "post": {
-        "description": "/s/job/listing/rules_csv_import",
-        "summary": "Listing - Rules Csv Import",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "data": {
-                    "type": "object"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "SKULabsToken": []
-          }
-        ],
-        "servers": [
-          {
-            "url": "https://app.skulabs.com"
           }
         ],
         "tags": [
@@ -4863,18 +4923,24 @@
       }
     },
     "/order/get_single_bulk": {
-      "get": {
+      "post": {
         "description": "/order/get_single_bulk",
         "summary": "Order - Get Single Bulk",
-        "parameters": [
-          {
-            "name": "order",
-            "in": "query",
-            "schema": {
-              "type": "string"
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "order": {
+                    "type": "string"
+                  }
+                }
+              }
             }
           }
-        ],
+        },
         "security": [
           {
             "SKULabsToken": []
@@ -6312,6 +6378,146 @@
         }
       }
     },
+    "/run/debug_request": {
+      "post": {
+        "description": "/run/debug_request",
+        "summary": "Run - Debug Request",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "store_id": {
+                    "type": "string"
+                  },
+                  "url": {
+                    "type": "string"
+                  },
+                  "method": {
+                    "type": "string"
+                  },
+                  "body": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "SKULabsToken": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://api.skulabs.com"
+          }
+        ],
+        "tags": [
+          "run"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Malformed request. Check that you have the correct parameters and that they are formatted correctly."
+          },
+          "401": {
+            "description": "Unauthorized. Did you forget to include your API key?"
+          }
+        }
+      }
+    },
+    "/run/shopify_returns_cleanup": {
+      "post": {
+        "description": "/run/shopify_returns_cleanup",
+        "summary": "Run - Shopify Returns Cleanup",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "params": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "SKULabsToken": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://api.skulabs.com"
+          }
+        ],
+        "tags": [
+          "run"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Malformed request. Check that you have the correct parameters and that they are formatted correctly."
+          },
+          "401": {
+            "description": "Unauthorized. Did you forget to include your API key?"
+          }
+        }
+      }
+    },
+    "/run/shopify_returns_simulation": {
+      "post": {
+        "description": "/run/shopify_returns_simulation",
+        "summary": "Run - Shopify Returns Simulation",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "SKULabsToken": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://api.skulabs.com"
+          }
+        ],
+        "tags": [
+          "run"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Malformed request. Check that you have the correct parameters and that they are formatted correctly."
+          },
+          "401": {
+            "description": "Unauthorized. Did you forget to include your API key?"
+          }
+        }
+      }
+    },
     "/shipments/get": {
       "get": {
         "description": "/shipments/get",
@@ -6437,184 +6643,6 @@
         }
       }
     },
-    "/s/job/shipments/csv_export": {
-      "get": {
-        "description": "/s/job/shipments/csv_export",
-        "summary": "Shipments - Csv Export",
-        "parameters": [
-          {
-            "name": "store_ids",
-            "in": "query",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          },
-          {
-            "name": "start",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "format": "date"
-            }
-          },
-          {
-            "name": "end",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "format": "date"
-            }
-          }
-        ],
-        "security": [
-          {
-            "SKULabsToken": []
-          }
-        ],
-        "servers": [
-          {
-            "url": "https://app.skulabs.com"
-          }
-        ],
-        "tags": [
-          "shipments"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Malformed request. Check that you have the correct parameters and that they are formatted correctly."
-          },
-          "401": {
-            "description": "Unauthorized. Did you forget to include your API key?"
-          }
-        }
-      }
-    },
-    "/s/ship/shipping/restore_inventory": {
-      "post": {
-        "description": "/s/ship/shipping/restore_inventory",
-        "summary": "Shipping - Restore Inventory",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "store_id": {
-                    "type": "string"
-                  },
-                  "order_number": {
-                    "type": "string"
-                  },
-                  "shipment_id": {
-                    "type": "string"
-                  },
-                  "tracking_number": {
-                    "type": "string"
-                  },
-                  "no_refresh": {
-                    "type": "boolean"
-                  },
-                  "carrier_shipment_id": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "SKULabsToken": []
-          }
-        ],
-        "servers": [
-          {
-            "url": "https://app.skulabs.com"
-          }
-        ],
-        "tags": [
-          "shipping"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Malformed request. Check that you have the correct parameters and that they are formatted correctly."
-          },
-          "401": {
-            "description": "Unauthorized. Did you forget to include your API key?"
-          }
-        }
-      }
-    },
-    "/s/ship/shipping/void": {
-      "delete": {
-        "description": "/s/ship/shipping/void",
-        "summary": "Shipping - Void",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "store_id": {
-                    "type": "string"
-                  },
-                  "order_number": {
-                    "type": "string"
-                  },
-                  "shipment_id": {
-                    "type": "string"
-                  },
-                  "tracking_number": {
-                    "type": "string"
-                  },
-                  "no_refresh": {
-                    "type": "boolean"
-                  },
-                  "carrier_shipment_id": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "SKULabsToken": []
-          }
-        ],
-        "servers": [
-          {
-            "url": "https://app.skulabs.com"
-          }
-        ],
-        "tags": [
-          "shipping"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Malformed request. Check that you have the correct parameters and that they are formatted correctly."
-          },
-          "401": {
-            "description": "Unauthorized. Did you forget to include your API key?"
-          }
-        }
-      }
-    },
     "/store/get": {
       "get": {
         "description": "/store/get",
@@ -6663,8 +6691,9 @@
                   "type": {
                     "type": "string",
                     "enum": [
-                      "order",
-                      "item"
+                      "orders",
+                      "items",
+                      "purchase_order"
                     ],
                     "description": "The type of tag to create"
                   },
@@ -7033,6 +7062,51 @@
                   },
                   "states": {
                     "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "SKULabsToken": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://api.skulabs.com"
+          }
+        ],
+        "tags": [
+          "warehouse"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Malformed request. Check that you have the correct parameters and that they are formatted correctly."
+          },
+          "401": {
+            "description": "Unauthorized. Did you forget to include your API key?"
+          }
+        }
+      }
+    },
+    "/warehouse/create_v2": {
+      "post": {
+        "description": "/warehouse/create_v2",
+        "summary": "Warehouse - Create V 2",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "data": {
+                    "type": "object"
                   }
                 }
               }
