@@ -61,6 +61,7 @@
     {
       "group": "Shipments",
       "pages": [
+        "api-docs/shipments/csv-export",
         "api-docs/shipments/get-by-range",
         "api-docs/shipments/get"
       ]
@@ -73,6 +74,7 @@
         "api-docs/item/add-serial-numbers",
         "api-docs/item/add-tag",
         "api-docs/item/bulk-assign",
+        "api-docs/item/bulk-remove",
         "api-docs/item/bulk-upsert",
         "api-docs/item/create-upsert",
         "api-docs/item/create",
@@ -114,7 +116,7 @@
     {
       "group": "Warehouse",
       "pages": [
-        "api-docs/warehouse/create-v-2",
+        "api-docs/warehouse/create-v2",
         "api-docs/warehouse/create",
         "api-docs/warehouse/get",
         "api-docs/warehouse/stats"
@@ -137,7 +139,7 @@
       "pages": [
         "api-docs/purchase-order/add-tag",
         "api-docs/purchase-order/bulk-accept",
-        "api-docs/purchase-order/create-v-2",
+        "api-docs/purchase-order/create-v2",
         "api-docs/purchase-order/create",
         "api-docs/purchase-order/get-by-status",
         "api-docs/purchase-order/get-closed-with-items",
@@ -145,6 +147,7 @@
         "api-docs/purchase-order/get-processing-with-item-id",
         "api-docs/purchase-order/get-processing-with-items",
         "api-docs/purchase-order/get-processing",
+        "api-docs/purchase-order/get-single-bulk",
         "api-docs/purchase-order/get-single-by-number",
         "api-docs/purchase-order/get-single",
         "api-docs/purchase-order/get",
@@ -231,9 +234,9 @@
       "group": "Inventory",
       "pages": [
         "api-docs/inventory/bulk-reconciliation",
+        "api-docs/inventory/calculate-free-map",
         "api-docs/inventory/decrease-on-hand",
         "api-docs/inventory/deduct-serial-numbers",
-        "api-docs/inventory/get-free-map",
         "api-docs/inventory/get-grouped-locations-map",
         "api-docs/inventory/get-history",
         "api-docs/inventory/get-inventory-history",
@@ -245,17 +248,25 @@
         "api-docs/inventory/get-kits-map",
         "api-docs/inventory/get-on-hand-location-map",
         "api-docs/inventory/get-received-history",
-        "api-docs/inventory/get-reserved-map-1",
         "api-docs/inventory/get-reserved-map",
+        "api-docs/inventory/get-via-post-reserved-map",
         "api-docs/inventory/get",
         "api-docs/inventory/increase-on-hand",
         "api-docs/inventory/upsert"
       ]
     },
     {
+      "group": "Inventory Table",
+      "pages": [
+        "api-docs/inventory-table/export-velocity"
+      ]
+    },
+    {
       "group": "Listing",
       "pages": [
-        "api-docs/listing/get"
+        "api-docs/listing/get",
+        "api-docs/listing/listing-links-csv-import",
+        "api-docs/listing/rules-csv-import"
       ]
     },
     {
@@ -264,6 +275,14 @@
         "api-docs/run/debug-request",
         "api-docs/run/shopify-returns-cleanup",
         "api-docs/run/shopify-returns-simulation"
+      ]
+    },
+    {
+      "group": "Shipping",
+      "pages": [
+        "api-docs/shipping/restore-inventory",
+        "api-docs/shipping/set-manifested",
+        "api-docs/shipping/void"
       ]
     },
     {
