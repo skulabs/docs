@@ -6843,15 +6843,21 @@
                 "properties": {
                   "type": {
                     "type": "string",
-                    "description": "Reconciliation type"
+                    "enum": [
+                      "increase",
+                      "decrease",
+                      "set",
+                      "update"
+                    ],
+                    "description": "Reconciliation type. \"increase\" adds to on-hand, \"decrease\" subtracts, \"set\" sets an exact value, \"update\" sets an exact value with per-row reason/notes."
                   },
                   "reason": {
                     "type": "string",
-                    "description": "Reason for reconciliation"
+                    "description": "Reason for reconciliation (used for increase, decrease, set types)"
                   },
                   "notes": {
                     "type": "string",
-                    "description": "Notes"
+                    "description": "Additional notes (used for increase, decrease, set types)"
                   },
                   "rows": {
                     "type": "array",
@@ -6869,6 +6875,14 @@
                         "quantity": {
                           "type": "number",
                           "description": "Quantity to reconcile"
+                        },
+                        "reason": {
+                          "type": "string",
+                          "description": "Per-row reason (used only when type is \"update\")"
+                        },
+                        "notes": {
+                          "type": "string",
+                          "description": "Per-row notes (used only when type is \"update\")"
                         }
                       },
                       "required": [
