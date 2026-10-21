@@ -50,7 +50,7 @@ gulp.task('clean', function () {
     .pipe(rimraf());
 });
 
-gulp.task('generate', shell.task('npx @mintlify/scraping@latest openapi-file openapi.json -o api-docs'));
+gulp.task('generate', shell.task('npx @mintlify/scraping@4.0.1084 openapi-file openapi.json -o api-docs'));
 
 gulp.task('fix_json', function (cb) {
   // Function to read directory and build array
