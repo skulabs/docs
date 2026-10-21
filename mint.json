@@ -274,7 +274,9 @@
       "pages": [
         "api-docs/run/debug-request",
         "api-docs/run/shopify-returns-cleanup",
-        "api-docs/run/shopify-returns-simulation"
+        "api-docs/run/shopify-returns-simulation",
+        "api-docs/run/square-returns-cleanup",
+        "api-docs/run/square-returns-simulation"
       ]
     },
     {
