@@ -27057,6 +27057,26 @@
                         ],
                         "description": "Weight unit"
                       },
+                      "length": {
+                        "type": "number",
+                        "description": "Package length"
+                      },
+                      "width": {
+                        "type": "number",
+                        "description": "Package width"
+                      },
+                      "height": {
+                        "type": "number",
+                        "description": "Package height"
+                      },
+                      "dimensions_unit": {
+                        "type": "string",
+                        "enum": [
+                          "in",
+                          "cm"
+                        ],
+                        "description": "Dimensions unit"
+                      },
                       "lag_time": {
                         "type": "number",
                         "description": "Lag time in days"
@@ -30795,6 +30815,40 @@
                       "sku": {
                         "type": "string",
                         "description": "SKU (alias for listing_sku)"
+                      },
+                      "weight": {
+                        "type": "number",
+                        "description": "Kit weight"
+                      },
+                      "weight_unit": {
+                        "type": "string",
+                        "enum": [
+                          "oz",
+                          "lb",
+                          "g",
+                          "kg"
+                        ],
+                        "description": "Weight unit"
+                      },
+                      "length": {
+                        "type": "number",
+                        "description": "Package length"
+                      },
+                      "width": {
+                        "type": "number",
+                        "description": "Package width"
+                      },
+                      "height": {
+                        "type": "number",
+                        "description": "Package height"
+                      },
+                      "dimensions_unit": {
+                        "type": "string",
+                        "enum": [
+                          "in",
+                          "cm"
+                        ],
+                        "description": "Dimensions unit"
                       }
                     },
                     "description": "Kit data to update (must include _id, kit_id, listing_sku, or sku to identify the kit)"
@@ -35828,6 +35882,28 @@
                   "cost": {
                     "type": "number",
                     "description": "Shipping cost"
+                  },
+                  "notify_customer": {
+                    "type": "boolean",
+                    "description": "Send a shipped notification email to the customer. When true, sends using the store shipped email template via Postmark."
+                  },
+                  "options": {
+                    "type": "object",
+                    "properties": {
+                      "mark_shipped": {
+                        "type": "boolean",
+                        "description": "Notify the sales channel that the order shipped."
+                      },
+                      "modify_status": {
+                        "type": "boolean",
+                        "description": "Update the order fulfillment status."
+                      },
+                      "force_mark_shipped": {
+                        "type": "boolean",
+                        "description": "Bypass the store \"release_barcode\" hold and notify the channel immediately. API callers only."
+                      }
+                    },
+                    "description": "Behavior options for the shipment."
                   }
                 },
                 "required": [
@@ -37975,8 +38051,165 @@
             "required": true,
             "schema": {
               "type": "object",
-              "properties": {},
-              "description": "Query selector object for filtering results"
+              "properties": {
+                "store_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Filter by an explicit list of store IDs. Each must be a store the caller has access to.",
+                  "example": [
+                    "507f1f77bcf86cd799439011"
+                  ]
+                },
+                "order_number": {
+                  "type": "string",
+                  "description": "Exact match on order_number."
+                },
+                "base_order_number": {
+                  "type": "string",
+                  "description": "Match orders sharing this base_order_number (groups split/combined orders)."
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "unstarted",
+                    "in_progress",
+                    "shipped",
+                    "cancelled",
+                    "cleared",
+                    "delayed",
+                    "stopped",
+                    "partially shipped",
+                    "archived",
+                    "awaiting fulfillment",
+                    "pending",
+                    "partially cleared"
+                  ],
+                  "description": "Exact match on order status."
+                },
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "manual",
+                    "combined",
+                    "split",
+                    "combined_child",
+                    "split_parent"
+                  ],
+                  "description": "Order type."
+                },
+                "state": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  ],
+                  "description": "Ship-to state. Pass a string for an exact match or an array for multi-state filtering."
+                },
+                "country": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  ],
+                  "description": "Ship-to country. Pass a string or an array."
+                },
+                "batch_number": {
+                  "type": "number",
+                  "description": "Exact match on batch_number."
+                },
+                "tags": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  ],
+                  "description": "Tag ID(s) to match."
+                },
+                "listings": {
+                  "nullable": true,
+                  "description": "Raw Mongo sub-query matched against stash.items (advanced use)."
+                },
+                "start_date": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "Lower bound for stash.date (order creation date).",
+                  "example": "2025-01-01T00:00:00.000Z"
+                },
+                "end_date": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "Upper bound for stash.date.",
+                  "example": "2025-01-31T23:59:59.999Z"
+                },
+                "shipped_start_date": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "Lower bound for shipped_date."
+                },
+                "shipped_end_date": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "Upper bound for shipped_date."
+                },
+                "last_updated_start_date": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "Lower bound for last_updated."
+                },
+                "last_updated_end_date": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "Upper bound for last_updated."
+                },
+                "ship_by_start_date": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "Lower bound for stash.ship_by_date (SLA deadline supplied by the sales channel)."
+                },
+                "ship_by_end_date": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "Upper bound for stash.ship_by_date. Pass the current time to find SLA-breached orders."
+                },
+                "fulfillment_warehouses": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Restrict to orders with at least one line item whose stash.items[].fulfillment_warehouse_id matches one of these warehouse IDs.",
+                  "example": [
+                    "507f1f77bcf86cd799439011"
+                  ]
+                },
+                "unfulfilled": {
+                  "type": "boolean",
+                  "description": "When true, restricts to processing=true, status NOT IN [cancelled, shipped], type NOT IN [split_parent, combined_child]."
+                },
+                "pending": {
+                  "type": "boolean",
+                  "description": "true = only pending-classified channel statuses; false = exclude pending."
+                }
+              }
             }
           },
           {
@@ -38470,6 +38703,79 @@
               },
               "description": "Filter by store IDs"
             }
+          },
+          {
+            "name": "warehouses",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Filter by warehouse IDs (matches order.warehouse_id or stash.items.fulfillment_warehouse_id)"
+            }
+          },
+          {
+            "name": "fulfillment_warehouses",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Filter by geo-routed fulfillment warehouse IDs (matches stash.items.fulfillment_warehouse_id only — unlike `warehouses`, ignores order-level warehouse_id)"
+            }
+          },
+          {
+            "name": "shipping_methods",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Filter by requested shipping method names"
+            }
+          },
+          {
+            "name": "advanced_filters",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "include",
+                      "exclude"
+                    ]
+                  },
+                  "criteria": {
+                    "type": "string",
+                    "enum": [
+                      "store",
+                      "tag",
+                      "status"
+                    ]
+                  },
+                  "value": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "type",
+                  "criteria",
+                  "value"
+                ]
+              },
+              "description": "Advanced include/exclude filters by store/tag/status"
+            }
           }
         ]
       }
@@ -38921,6 +39227,79 @@
                 "type": "string"
               },
               "description": "Filter by store IDs"
+            }
+          },
+          {
+            "name": "warehouses",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Filter by warehouse IDs (matches order.warehouse_id or stash.items.fulfillment_warehouse_id)"
+            }
+          },
+          {
+            "name": "fulfillment_warehouses",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Filter by geo-routed fulfillment warehouse IDs (matches stash.items.fulfillment_warehouse_id only — unlike `warehouses`, ignores order-level warehouse_id)"
+            }
+          },
+          {
+            "name": "shipping_methods",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Filter by requested shipping method names"
+            }
+          },
+          {
+            "name": "advanced_filters",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "include",
+                      "exclude"
+                    ]
+                  },
+                  "criteria": {
+                    "type": "string",
+                    "enum": [
+                      "store",
+                      "tag",
+                      "status"
+                    ]
+                  },
+                  "value": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "type",
+                  "criteria",
+                  "value"
+                ]
+              },
+              "description": "Advanced include/exclude filters by store/tag/status"
             }
           }
         ]
@@ -40609,6 +40988,79 @@
                 "type": "string"
               },
               "description": "Filter by store IDs"
+            }
+          },
+          {
+            "name": "warehouses",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Filter by warehouse IDs (matches order.warehouse_id or stash.items.fulfillment_warehouse_id)"
+            }
+          },
+          {
+            "name": "fulfillment_warehouses",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Filter by geo-routed fulfillment warehouse IDs (matches stash.items.fulfillment_warehouse_id only — unlike `warehouses`, ignores order-level warehouse_id)"
+            }
+          },
+          {
+            "name": "shipping_methods",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Filter by requested shipping method names"
+            }
+          },
+          {
+            "name": "advanced_filters",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "include",
+                      "exclude"
+                    ]
+                  },
+                  "criteria": {
+                    "type": "string",
+                    "enum": [
+                      "store",
+                      "tag",
+                      "status"
+                    ]
+                  },
+                  "value": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "type",
+                  "criteria",
+                  "value"
+                ]
+              },
+              "description": "Advanced include/exclude filters by store/tag/status"
             }
           }
         ]
@@ -43177,6 +43629,14 @@
                     "type": "object",
                     "properties": {},
                     "description": "Order reference object"
+                  },
+                  "log_note": {
+                    "type": "string",
+                    "description": "Optional note recorded in the order activity log for this status change. Preserved when unarchive is true; if omitted on an unarchive, a default note is recorded."
+                  },
+                  "unarchive": {
+                    "type": "boolean",
+                    "description": "When true, forces the order out of the archived state: returns it to processing, removes the \"Hold - Archived\" tag, and flags it to prevent immediate auto re-archiving. Combine with a status (e.g. \"unstarted\") to restart a previously shipped or archived order."
                   }
                 },
                 "required": [
@@ -47527,7 +47987,7 @@
       "post": {
         "operationId": "post_purchase_order_create_v2",
         "summary": "Purchase Order - Create V2",
-        "description": "Create a purchase order using names instead of IDs for store, distributor, and warehouse. Supports item lookup by SKU, MPN, or barcode.",
+        "description": "Create a purchase order using names instead of IDs for store, distributor, and warehouse. Supports item lookup by SKU, MPN, or barcode. Set \"update\": true in the data object with an existing \"number\" to update that purchase order in place (all provided fields overwrite it) instead of erroring on a duplicate; when no PO matches the number a new one is created.",
         "tags": [
           "purchase_order"
         ],
@@ -53318,1155 +53778,6 @@
         }
       }
     },
-    "/run/debug_request": {
-      "post": {
-        "operationId": "post_run_debug_request",
-        "summary": "Run - Debug Request",
-        "description": "/run/debug_request",
-        "tags": [
-          "run"
-        ],
-        "security": [
-          {
-            "SKULabsToken": []
-          }
-        ],
-        "servers": [
-          {
-            "url": "https://api.skulabs.com"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Malformed request. Check that you have the correct parameters and that they are formatted correctly.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string",
-                          "description": "Detailed error message"
-                        },
-                        "code": {
-                          "type": "string",
-                          "description": "Machine-readable error code"
-                        },
-                        "overview": {
-                          "type": "string",
-                          "description": "Short human-friendly description"
-                        },
-                        "statusCode": {
-                          "type": "number",
-                          "description": "HTTP status code"
-                        },
-                        "origin": {
-                          "type": "string",
-                          "description": "Error source"
-                        },
-                        "skulabsTraceId": {
-                          "type": "string",
-                          "description": "Trace ID for support"
-                        },
-                        "type": {
-                          "type": "string",
-                          "enum": [
-                            "error",
-                            "notice",
-                            "success"
-                          ],
-                          "description": "Error severity for UI handling"
-                        },
-                        "user_error": {
-                          "type": "boolean",
-                          "description": "Whether the error was caused by user input"
-                        },
-                        "display": {
-                          "type": "string",
-                          "enum": [
-                            "notification",
-                            "panel"
-                          ],
-                          "description": "Suggested UI display mode for the error"
-                        }
-                      },
-                      "required": [
-                        "message",
-                        "statusCode"
-                      ]
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized. Did you forget to include your API key?",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string",
-                          "description": "Detailed error message"
-                        },
-                        "code": {
-                          "type": "string",
-                          "description": "Machine-readable error code"
-                        },
-                        "overview": {
-                          "type": "string",
-                          "description": "Short human-friendly description"
-                        },
-                        "statusCode": {
-                          "type": "number",
-                          "description": "HTTP status code"
-                        },
-                        "origin": {
-                          "type": "string",
-                          "description": "Error source"
-                        },
-                        "skulabsTraceId": {
-                          "type": "string",
-                          "description": "Trace ID for support"
-                        },
-                        "type": {
-                          "type": "string",
-                          "enum": [
-                            "error",
-                            "notice",
-                            "success"
-                          ],
-                          "description": "Error severity for UI handling"
-                        },
-                        "user_error": {
-                          "type": "boolean",
-                          "description": "Whether the error was caused by user input"
-                        },
-                        "display": {
-                          "type": "string",
-                          "enum": [
-                            "notification",
-                            "panel"
-                          ],
-                          "description": "Suggested UI display mode for the error"
-                        }
-                      },
-                      "required": [
-                        "message",
-                        "statusCode"
-                      ]
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden. Insufficient permissions.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string",
-                          "description": "Detailed error message"
-                        },
-                        "code": {
-                          "type": "string",
-                          "description": "Machine-readable error code"
-                        },
-                        "overview": {
-                          "type": "string",
-                          "description": "Short human-friendly description"
-                        },
-                        "statusCode": {
-                          "type": "number",
-                          "description": "HTTP status code"
-                        },
-                        "origin": {
-                          "type": "string",
-                          "description": "Error source"
-                        },
-                        "skulabsTraceId": {
-                          "type": "string",
-                          "description": "Trace ID for support"
-                        },
-                        "type": {
-                          "type": "string",
-                          "enum": [
-                            "error",
-                            "notice",
-                            "success"
-                          ],
-                          "description": "Error severity for UI handling"
-                        },
-                        "user_error": {
-                          "type": "boolean",
-                          "description": "Whether the error was caused by user input"
-                        },
-                        "display": {
-                          "type": "string",
-                          "enum": [
-                            "notification",
-                            "panel"
-                          ],
-                          "description": "Suggested UI display mode for the error"
-                        }
-                      },
-                      "required": [
-                        "message",
-                        "statusCode"
-                      ]
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "Too many requests. Rate limit exceeded.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string",
-                          "description": "Detailed error message"
-                        },
-                        "code": {
-                          "type": "string",
-                          "description": "Machine-readable error code"
-                        },
-                        "overview": {
-                          "type": "string",
-                          "description": "Short human-friendly description"
-                        },
-                        "statusCode": {
-                          "type": "number",
-                          "description": "HTTP status code"
-                        },
-                        "origin": {
-                          "type": "string",
-                          "description": "Error source"
-                        },
-                        "skulabsTraceId": {
-                          "type": "string",
-                          "description": "Trace ID for support"
-                        },
-                        "type": {
-                          "type": "string",
-                          "enum": [
-                            "error",
-                            "notice",
-                            "success"
-                          ],
-                          "description": "Error severity for UI handling"
-                        },
-                        "user_error": {
-                          "type": "boolean",
-                          "description": "Whether the error was caused by user input"
-                        },
-                        "display": {
-                          "type": "string",
-                          "enum": [
-                            "notification",
-                            "panel"
-                          ],
-                          "description": "Suggested UI display mode for the error"
-                        }
-                      },
-                      "required": [
-                        "message",
-                        "statusCode"
-                      ]
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string",
-                          "description": "Detailed error message"
-                        },
-                        "code": {
-                          "type": "string",
-                          "description": "Machine-readable error code"
-                        },
-                        "overview": {
-                          "type": "string",
-                          "description": "Short human-friendly description"
-                        },
-                        "statusCode": {
-                          "type": "number",
-                          "description": "HTTP status code"
-                        },
-                        "origin": {
-                          "type": "string",
-                          "description": "Error source"
-                        },
-                        "skulabsTraceId": {
-                          "type": "string",
-                          "description": "Trace ID for support"
-                        },
-                        "type": {
-                          "type": "string",
-                          "enum": [
-                            "error",
-                            "notice",
-                            "success"
-                          ],
-                          "description": "Error severity for UI handling"
-                        },
-                        "user_error": {
-                          "type": "boolean",
-                          "description": "Whether the error was caused by user input"
-                        },
-                        "display": {
-                          "type": "string",
-                          "enum": [
-                            "notification",
-                            "panel"
-                          ],
-                          "description": "Suggested UI display mode for the error"
-                        }
-                      },
-                      "required": [
-                        "message",
-                        "statusCode"
-                      ]
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
-                }
-              }
-            }
-          }
-        },
-        "requestBody": {
-          "required": false,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "store_id": {
-                    "type": "string"
-                  },
-                  "url": {
-                    "type": "string"
-                  },
-                  "method": {
-                    "type": "string"
-                  },
-                  "body": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/run/shopify_returns_cleanup": {
-      "post": {
-        "operationId": "post_run_shopify_returns_cleanup",
-        "summary": "Run - Shopify Returns Cleanup",
-        "description": "/run/shopify_returns_cleanup",
-        "tags": [
-          "run"
-        ],
-        "security": [
-          {
-            "SKULabsToken": []
-          }
-        ],
-        "servers": [
-          {
-            "url": "https://api.skulabs.com"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Malformed request. Check that you have the correct parameters and that they are formatted correctly.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string",
-                          "description": "Detailed error message"
-                        },
-                        "code": {
-                          "type": "string",
-                          "description": "Machine-readable error code"
-                        },
-                        "overview": {
-                          "type": "string",
-                          "description": "Short human-friendly description"
-                        },
-                        "statusCode": {
-                          "type": "number",
-                          "description": "HTTP status code"
-                        },
-                        "origin": {
-                          "type": "string",
-                          "description": "Error source"
-                        },
-                        "skulabsTraceId": {
-                          "type": "string",
-                          "description": "Trace ID for support"
-                        },
-                        "type": {
-                          "type": "string",
-                          "enum": [
-                            "error",
-                            "notice",
-                            "success"
-                          ],
-                          "description": "Error severity for UI handling"
-                        },
-                        "user_error": {
-                          "type": "boolean",
-                          "description": "Whether the error was caused by user input"
-                        },
-                        "display": {
-                          "type": "string",
-                          "enum": [
-                            "notification",
-                            "panel"
-                          ],
-                          "description": "Suggested UI display mode for the error"
-                        }
-                      },
-                      "required": [
-                        "message",
-                        "statusCode"
-                      ]
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized. Did you forget to include your API key?",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string",
-                          "description": "Detailed error message"
-                        },
-                        "code": {
-                          "type": "string",
-                          "description": "Machine-readable error code"
-                        },
-                        "overview": {
-                          "type": "string",
-                          "description": "Short human-friendly description"
-                        },
-                        "statusCode": {
-                          "type": "number",
-                          "description": "HTTP status code"
-                        },
-                        "origin": {
-                          "type": "string",
-                          "description": "Error source"
-                        },
-                        "skulabsTraceId": {
-                          "type": "string",
-                          "description": "Trace ID for support"
-                        },
-                        "type": {
-                          "type": "string",
-                          "enum": [
-                            "error",
-                            "notice",
-                            "success"
-                          ],
-                          "description": "Error severity for UI handling"
-                        },
-                        "user_error": {
-                          "type": "boolean",
-                          "description": "Whether the error was caused by user input"
-                        },
-                        "display": {
-                          "type": "string",
-                          "enum": [
-                            "notification",
-                            "panel"
-                          ],
-                          "description": "Suggested UI display mode for the error"
-                        }
-                      },
-                      "required": [
-                        "message",
-                        "statusCode"
-                      ]
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden. Insufficient permissions.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string",
-                          "description": "Detailed error message"
-                        },
-                        "code": {
-                          "type": "string",
-                          "description": "Machine-readable error code"
-                        },
-                        "overview": {
-                          "type": "string",
-                          "description": "Short human-friendly description"
-                        },
-                        "statusCode": {
-                          "type": "number",
-                          "description": "HTTP status code"
-                        },
-                        "origin": {
-                          "type": "string",
-                          "description": "Error source"
-                        },
-                        "skulabsTraceId": {
-                          "type": "string",
-                          "description": "Trace ID for support"
-                        },
-                        "type": {
-                          "type": "string",
-                          "enum": [
-                            "error",
-                            "notice",
-                            "success"
-                          ],
-                          "description": "Error severity for UI handling"
-                        },
-                        "user_error": {
-                          "type": "boolean",
-                          "description": "Whether the error was caused by user input"
-                        },
-                        "display": {
-                          "type": "string",
-                          "enum": [
-                            "notification",
-                            "panel"
-                          ],
-                          "description": "Suggested UI display mode for the error"
-                        }
-                      },
-                      "required": [
-                        "message",
-                        "statusCode"
-                      ]
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "Too many requests. Rate limit exceeded.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string",
-                          "description": "Detailed error message"
-                        },
-                        "code": {
-                          "type": "string",
-                          "description": "Machine-readable error code"
-                        },
-                        "overview": {
-                          "type": "string",
-                          "description": "Short human-friendly description"
-                        },
-                        "statusCode": {
-                          "type": "number",
-                          "description": "HTTP status code"
-                        },
-                        "origin": {
-                          "type": "string",
-                          "description": "Error source"
-                        },
-                        "skulabsTraceId": {
-                          "type": "string",
-                          "description": "Trace ID for support"
-                        },
-                        "type": {
-                          "type": "string",
-                          "enum": [
-                            "error",
-                            "notice",
-                            "success"
-                          ],
-                          "description": "Error severity for UI handling"
-                        },
-                        "user_error": {
-                          "type": "boolean",
-                          "description": "Whether the error was caused by user input"
-                        },
-                        "display": {
-                          "type": "string",
-                          "enum": [
-                            "notification",
-                            "panel"
-                          ],
-                          "description": "Suggested UI display mode for the error"
-                        }
-                      },
-                      "required": [
-                        "message",
-                        "statusCode"
-                      ]
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string",
-                          "description": "Detailed error message"
-                        },
-                        "code": {
-                          "type": "string",
-                          "description": "Machine-readable error code"
-                        },
-                        "overview": {
-                          "type": "string",
-                          "description": "Short human-friendly description"
-                        },
-                        "statusCode": {
-                          "type": "number",
-                          "description": "HTTP status code"
-                        },
-                        "origin": {
-                          "type": "string",
-                          "description": "Error source"
-                        },
-                        "skulabsTraceId": {
-                          "type": "string",
-                          "description": "Trace ID for support"
-                        },
-                        "type": {
-                          "type": "string",
-                          "enum": [
-                            "error",
-                            "notice",
-                            "success"
-                          ],
-                          "description": "Error severity for UI handling"
-                        },
-                        "user_error": {
-                          "type": "boolean",
-                          "description": "Whether the error was caused by user input"
-                        },
-                        "display": {
-                          "type": "string",
-                          "enum": [
-                            "notification",
-                            "panel"
-                          ],
-                          "description": "Suggested UI display mode for the error"
-                        }
-                      },
-                      "required": [
-                        "message",
-                        "statusCode"
-                      ]
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
-                }
-              }
-            }
-          }
-        },
-        "requestBody": {
-          "required": false,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "params": {
-                    "type": "object"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/run/shopify_returns_simulation": {
-      "post": {
-        "operationId": "post_run_shopify_returns_simulation",
-        "summary": "Run - Shopify Returns Simulation",
-        "description": "/run/shopify_returns_simulation",
-        "tags": [
-          "run"
-        ],
-        "security": [
-          {
-            "SKULabsToken": []
-          }
-        ],
-        "servers": [
-          {
-            "url": "https://api.skulabs.com"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Malformed request. Check that you have the correct parameters and that they are formatted correctly.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string",
-                          "description": "Detailed error message"
-                        },
-                        "code": {
-                          "type": "string",
-                          "description": "Machine-readable error code"
-                        },
-                        "overview": {
-                          "type": "string",
-                          "description": "Short human-friendly description"
-                        },
-                        "statusCode": {
-                          "type": "number",
-                          "description": "HTTP status code"
-                        },
-                        "origin": {
-                          "type": "string",
-                          "description": "Error source"
-                        },
-                        "skulabsTraceId": {
-                          "type": "string",
-                          "description": "Trace ID for support"
-                        },
-                        "type": {
-                          "type": "string",
-                          "enum": [
-                            "error",
-                            "notice",
-                            "success"
-                          ],
-                          "description": "Error severity for UI handling"
-                        },
-                        "user_error": {
-                          "type": "boolean",
-                          "description": "Whether the error was caused by user input"
-                        },
-                        "display": {
-                          "type": "string",
-                          "enum": [
-                            "notification",
-                            "panel"
-                          ],
-                          "description": "Suggested UI display mode for the error"
-                        }
-                      },
-                      "required": [
-                        "message",
-                        "statusCode"
-                      ]
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized. Did you forget to include your API key?",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string",
-                          "description": "Detailed error message"
-                        },
-                        "code": {
-                          "type": "string",
-                          "description": "Machine-readable error code"
-                        },
-                        "overview": {
-                          "type": "string",
-                          "description": "Short human-friendly description"
-                        },
-                        "statusCode": {
-                          "type": "number",
-                          "description": "HTTP status code"
-                        },
-                        "origin": {
-                          "type": "string",
-                          "description": "Error source"
-                        },
-                        "skulabsTraceId": {
-                          "type": "string",
-                          "description": "Trace ID for support"
-                        },
-                        "type": {
-                          "type": "string",
-                          "enum": [
-                            "error",
-                            "notice",
-                            "success"
-                          ],
-                          "description": "Error severity for UI handling"
-                        },
-                        "user_error": {
-                          "type": "boolean",
-                          "description": "Whether the error was caused by user input"
-                        },
-                        "display": {
-                          "type": "string",
-                          "enum": [
-                            "notification",
-                            "panel"
-                          ],
-                          "description": "Suggested UI display mode for the error"
-                        }
-                      },
-                      "required": [
-                        "message",
-                        "statusCode"
-                      ]
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden. Insufficient permissions.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string",
-                          "description": "Detailed error message"
-                        },
-                        "code": {
-                          "type": "string",
-                          "description": "Machine-readable error code"
-                        },
-                        "overview": {
-                          "type": "string",
-                          "description": "Short human-friendly description"
-                        },
-                        "statusCode": {
-                          "type": "number",
-                          "description": "HTTP status code"
-                        },
-                        "origin": {
-                          "type": "string",
-                          "description": "Error source"
-                        },
-                        "skulabsTraceId": {
-                          "type": "string",
-                          "description": "Trace ID for support"
-                        },
-                        "type": {
-                          "type": "string",
-                          "enum": [
-                            "error",
-                            "notice",
-                            "success"
-                          ],
-                          "description": "Error severity for UI handling"
-                        },
-                        "user_error": {
-                          "type": "boolean",
-                          "description": "Whether the error was caused by user input"
-                        },
-                        "display": {
-                          "type": "string",
-                          "enum": [
-                            "notification",
-                            "panel"
-                          ],
-                          "description": "Suggested UI display mode for the error"
-                        }
-                      },
-                      "required": [
-                        "message",
-                        "statusCode"
-                      ]
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "Too many requests. Rate limit exceeded.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string",
-                          "description": "Detailed error message"
-                        },
-                        "code": {
-                          "type": "string",
-                          "description": "Machine-readable error code"
-                        },
-                        "overview": {
-                          "type": "string",
-                          "description": "Short human-friendly description"
-                        },
-                        "statusCode": {
-                          "type": "number",
-                          "description": "HTTP status code"
-                        },
-                        "origin": {
-                          "type": "string",
-                          "description": "Error source"
-                        },
-                        "skulabsTraceId": {
-                          "type": "string",
-                          "description": "Trace ID for support"
-                        },
-                        "type": {
-                          "type": "string",
-                          "enum": [
-                            "error",
-                            "notice",
-                            "success"
-                          ],
-                          "description": "Error severity for UI handling"
-                        },
-                        "user_error": {
-                          "type": "boolean",
-                          "description": "Whether the error was caused by user input"
-                        },
-                        "display": {
-                          "type": "string",
-                          "enum": [
-                            "notification",
-                            "panel"
-                          ],
-                          "description": "Suggested UI display mode for the error"
-                        }
-                      },
-                      "required": [
-                        "message",
-                        "statusCode"
-                      ]
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string",
-                          "description": "Detailed error message"
-                        },
-                        "code": {
-                          "type": "string",
-                          "description": "Machine-readable error code"
-                        },
-                        "overview": {
-                          "type": "string",
-                          "description": "Short human-friendly description"
-                        },
-                        "statusCode": {
-                          "type": "number",
-                          "description": "HTTP status code"
-                        },
-                        "origin": {
-                          "type": "string",
-                          "description": "Error source"
-                        },
-                        "skulabsTraceId": {
-                          "type": "string",
-                          "description": "Trace ID for support"
-                        },
-                        "type": {
-                          "type": "string",
-                          "enum": [
-                            "error",
-                            "notice",
-                            "success"
-                          ],
-                          "description": "Error severity for UI handling"
-                        },
-                        "user_error": {
-                          "type": "boolean",
-                          "description": "Whether the error was caused by user input"
-                        },
-                        "display": {
-                          "type": "string",
-                          "enum": [
-                            "notification",
-                            "panel"
-                          ],
-                          "description": "Suggested UI display mode for the error"
-                        }
-                      },
-                      "required": [
-                        "message",
-                        "statusCode"
-                      ]
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/shipments/get": {
       "get": {
         "operationId": "get_shipments_get",
@@ -55852,6 +55163,25 @@
                 "shipments_no_location": {
                   "type": "boolean",
                   "description": "Include shipments with no location when filtering by warehouse"
+                },
+                "carrier_account_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Carrier account IDs to include; 'null' = manual shipments. Omit or leave empty to include all carriers."
+                },
+                "exclude_draft_shipments": {
+                  "type": "boolean",
+                  "description": "Exclude draft shipments (state unshipped or shipping; label never purchased)"
+                },
+                "exclude_failed_shipments": {
+                  "type": "boolean",
+                  "description": "Exclude shipments whose state is failed (failed label attempts)"
+                },
+                "exclude_voided_shipments": {
+                  "type": "boolean",
+                  "description": "Exclude real voided shipments (purchased then voided: state shipped and voided)"
                 }
               },
               "description": "CSV export options"
@@ -59712,6 +59042,11 @@
                     "type": "string",
                     "nullable": true,
                     "description": "Transfer order notes"
+                  },
+                  "tracking_number": {
+                    "type": "string",
+                    "nullable": true,
+                    "description": "Tracking number"
                   }
                 },
                 "required": [
@@ -60937,7 +60272,7 @@
                   },
                   "type": {
                     "type": "string",
-                    "description": "Warehouse type"
+                    "description": "Warehouse type. \"shopify\" is rejected here because this route cannot pass a store_location; use create_v2."
                   },
                   "address": {
                     "$ref": "#/components/schemas/Address"
@@ -61354,6 +60689,12 @@
                     "description": "Warehouse name",
                     "example": "Main Warehouse"
                   },
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "Sender email used for Transfer Order emails",
+                    "example": "warehouse@example.com"
+                  },
                   "type": {
                     "type": "string",
                     "description": "Warehouse type"
@@ -61364,6 +60705,14 @@
                   "is_default": {
                     "type": "boolean",
                     "description": "Set as default warehouse"
+                  },
+                  "store_id": {
+                    "type": "string",
+                    "description": "Store this warehouse belongs to (store-backed types only)"
+                  },
+                  "store_location": {
+                    "type": "string",
+                    "description": "Shopify only: store location id this warehouse syncs its inventory from. Required when type is \"shopify\", ignored otherwise."
                   }
                 },
                 "required": [
@@ -63224,7 +62573,14 @@
             "items": {
               "type": "string"
             },
-            "description": "Warehouse IDs to filter by"
+            "description": "Warehouse IDs supplying the on-hand counts used for stock availability"
+          },
+          "order_warehouse_filters": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Warehouse IDs (or \"unassigned\") an order must be assigned to in order to be batched"
           },
           "include_out_of_stock": {
             "type": "boolean",
@@ -64588,6 +63944,37 @@
                 "quantity": {
                   "type": "number",
                   "description": "Quantity of this item in the kit"
+                },
+                "kit_id": {
+                  "type": "string",
+                  "nullable": true,
+                  "description": "Source sub-kit ID if this item was expanded from a nested kit (null for direct items)"
+                },
+                "kit_quantity": {
+                  "type": "number",
+                  "nullable": true,
+                  "description": "Quantity of the sub-kit added to the parent kit (null for direct items)"
+                },
+                "sub_kit_chain": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "kit_id": {
+                        "type": "string",
+                        "description": "Ancestor sub-kit ID"
+                      },
+                      "kit_quantity": {
+                        "type": "number",
+                        "description": "Ancestor sub-kit quantity"
+                      }
+                    },
+                    "required": [
+                      "kit_id",
+                      "kit_quantity"
+                    ]
+                  },
+                  "description": "Ancestor chain when this item came from a nested sub-kit"
                 }
               },
               "required": [
@@ -64685,6 +64072,30 @@
             ],
             "description": "Weight unit"
           },
+          "length": {
+            "type": "number",
+            "nullable": true,
+            "description": "Package length"
+          },
+          "width": {
+            "type": "number",
+            "nullable": true,
+            "description": "Package width"
+          },
+          "height": {
+            "type": "number",
+            "nullable": true,
+            "description": "Package height"
+          },
+          "dimensions_unit": {
+            "type": "string",
+            "nullable": true,
+            "enum": [
+              "in",
+              "cm"
+            ],
+            "description": "Dimensions unit"
+          },
           "lag_time": {
             "type": "number",
             "nullable": true,
@@ -64724,6 +64135,58 @@
           "_id",
           "name"
         ]
+      },
+      "ListingInventoryEntry": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Channel location name"
+          },
+          "location_id": {
+            "type": "string",
+            "description": "Channel location ID"
+          },
+          "inventory_item_id": {
+            "type": "string",
+            "description": "Channel inventory item ID for this location"
+          },
+          "quantity": {
+            "type": "number",
+            "nullable": true,
+            "description": "Quantity the channel reports at this location"
+          },
+          "last_pushed": {
+            "type": "number",
+            "nullable": true,
+            "description": "Last quantity pushed to this location"
+          },
+          "last_pushed_time": {
+            "type": "string",
+            "nullable": true,
+            "description": "Timestamp of the last push to this location",
+            "example": "2025-01-15T12:00:00.000Z"
+          },
+          "last_failed": {
+            "type": "number",
+            "nullable": true,
+            "description": "Last quantity that failed to push to this location"
+          },
+          "last_failed_time": {
+            "type": "string",
+            "nullable": true,
+            "description": "Timestamp of the last failed push to this location",
+            "example": "2025-01-15T12:00:00.000Z"
+          },
+          "untracked": {
+            "type": "boolean",
+            "description": "The channel does not track stock levels at this location"
+          },
+          "unassigned": {
+            "type": "boolean",
+            "description": "The item is not connected to this location on the channel"
+          }
+        }
       },
       "ListingVariant": {
         "type": "object",
@@ -64772,6 +64235,32 @@
             "type": "string",
             "description": "Price sync rule for this variant"
           },
+          "restock_date": {
+            "type": "string",
+            "nullable": true,
+            "description": "Restock date (Amazon only)",
+            "example": "2025-01-15"
+          },
+          "restock_quantity": {
+            "type": "number",
+            "nullable": true,
+            "description": "Restock quantity (Amazon only)"
+          },
+          "restock_date_from_po": {
+            "type": "boolean",
+            "nullable": true,
+            "description": "Use nearest PO due date as restock date (Amazon only)"
+          },
+          "restock_date_buffer_days": {
+            "type": "number",
+            "nullable": true,
+            "description": "Days to add after nearest PO due date (Amazon only)"
+          },
+          "restock_quantity_rule": {
+            "type": "string",
+            "nullable": true,
+            "description": "Expression rule for restock quantity, e.g. incoming_due_by(30) (Amazon only)"
+          },
           "last_pushed": {
             "type": "number",
             "nullable": true,
@@ -64802,8 +64291,7 @@
           "inventory": {
             "type": "array",
             "items": {
-              "type": "object",
-              "properties": {}
+              "$ref": "#/components/schemas/ListingInventoryEntry"
             },
             "description": "Multi-location inventory entries for this variant"
           }
@@ -64886,6 +64374,13 @@
             "type": "number",
             "description": "On-hand quantity reported by the channel"
           },
+          "inventory": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ListingInventoryEntry"
+            },
+            "description": "Multi-location inventory entries for this listing"
+          },
           "image": {
             "type": "string",
             "description": "Listing image URL"
@@ -64937,6 +64432,21 @@
             "type": "number",
             "nullable": true,
             "description": "Restock quantity (Amazon only)"
+          },
+          "restock_date_from_po": {
+            "type": "boolean",
+            "nullable": true,
+            "description": "Use nearest PO due date as restock date (Amazon only)"
+          },
+          "restock_date_buffer_days": {
+            "type": "number",
+            "nullable": true,
+            "description": "Days to add after nearest PO due date (Amazon only)"
+          },
+          "restock_quantity_rule": {
+            "type": "string",
+            "nullable": true,
+            "description": "Expression rule for restock quantity, e.g. incoming_due_by(30) (Amazon only)"
           },
           "last_pushed": {
             "type": "number",
@@ -65382,6 +64892,16 @@
           "line_id": {
             "type": "string",
             "description": "Line item ID"
+          },
+          "sub_kit_id": {
+            "type": "string",
+            "nullable": true,
+            "description": "Sub-kit ID this scan was attributed to"
+          },
+          "sub_kit_name": {
+            "type": "string",
+            "nullable": true,
+            "description": "Sub-kit chain name this scan was attributed to"
           }
         }
       },
@@ -65617,6 +65137,11 @@
             "description": "Order date",
             "example": "2025-01-15"
           },
+          "ship_by_date": {
+            "type": "string",
+            "description": "Channel-supplied ship-by deadline (Amazon LatestShipDate, TikTok rts_sla_time, etc.)",
+            "example": "2025-01-17T23:59:59.000Z"
+          },
           "items": {
             "type": "array",
             "items": {
@@ -65785,6 +65310,12 @@
             "type": "string",
             "nullable": true,
             "description": "Channel-reported status"
+          },
+          "customer_id": {
+            "type": "string",
+            "nullable": true,
+            "description": "Customer identifier (ObjectId string) from the customers collection. Matched via shipping email or channel ID. Null if no matching customer found.",
+            "example": "507f1f77bcf86cd799439011"
           }
         }
       },
@@ -66435,6 +65966,12 @@
               "$ref": "#/components/schemas/OrderNote"
             },
             "description": "Delivery instructions"
+          },
+          "customer_id": {
+            "type": "string",
+            "nullable": true,
+            "description": "Customer identifier (ObjectId string) from the customers collection. Matched via shipping email or channel ID. Null if no matching customer found.",
+            "example": "507f1f77bcf86cd799439011"
           }
         },
         "description": "Full order object with inventory and barcodes"
@@ -66608,6 +66145,10 @@
           "description": {
             "type": "string",
             "description": "Item description/notes"
+          },
+          "metadata": {
+            "type": "string",
+            "description": "Order line metadata carried onto the PO line, e.g. personalization or engraving text. Plain text or a JSON stringified { key: value }."
           },
           "unit": {
             "type": "string",
@@ -67052,6 +66593,10 @@
           "template_carrier": {
             "type": "string",
             "description": "Carrier type for the template"
+          },
+          "package_short_name": {
+            "type": "string",
+            "description": "Walmart SWW package type short name (e.g. USPS_LG_FLAT_RATE_BOX)"
           }
         },
         "description": "Package dimensions and weight"
@@ -67502,6 +67047,16 @@
               "type": "string"
             },
             "description": "Serial numbers that have been transferred"
+          },
+          "unit_retail": {
+            "type": "number",
+            "nullable": true,
+            "description": "Per-unit retail value from the catalog at read time (null when unknown)"
+          },
+          "line_total": {
+            "type": "number",
+            "nullable": true,
+            "description": "unit_retail * quantity (null when retail unknown)"
           }
         },
         "required": [
@@ -67584,12 +67139,21 @@
             "nullable": true,
             "description": "Transfer order notes"
           },
+          "tracking_number": {
+            "type": "string",
+            "nullable": true,
+            "description": "Tracking number"
+          },
           "items": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/TransferOrderItem"
             },
             "description": "Line items in the transfer order"
+          },
+          "total_value": {
+            "type": "number",
+            "description": "Sum of all line_total values for the order"
           },
           "log": {
             "type": "array",
@@ -67658,6 +67222,12 @@
             "type": "string",
             "description": "Warehouse name"
           },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Sender email used for Transfer Order emails",
+            "example": "warehouse@example.com"
+          },
           "type": {
             "type": "string",
             "description": "Warehouse type"
@@ -67680,6 +67250,11 @@
               "type": "string"
             },
             "description": "State routing assignments"
+          },
+          "store_location": {
+            "type": "string",
+            "description": "Shopify only: id of the store location this warehouse syncs its inventory from.",
+            "example": "70179422390"
           }
         },
         "required": [

@@ -270,14 +270,6 @@
       ]
     },
     {
-      "group": "Run",
-      "pages": [
-        "api-docs/run/debug-request",
-        "api-docs/run/shopify-returns-cleanup",
-        "api-docs/run/shopify-returns-simulation"
-      ]
-    },
-    {
       "group": "Shipping",
       "pages": [
         "api-docs/shipping/restore-inventory",
