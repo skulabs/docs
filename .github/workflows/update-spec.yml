@@ -1,0 +1,172 @@
+# Regenerates the API reference from a live OpenAPI spec and opens a PR.
+# Merging the PR to main is the production deploy (Mintlify publishes main),
+# so a production run merges itself unless it removes endpoints from the public docs.
+#
+# The build runs third-party code (npm packages, the Mintlify scraper), so it gets a
+# read-only token; only the publish job, which runs no project code, can write.
+name: Update API spec
+
+on:
+  workflow_dispatch:
+    inputs:
+      source:
+        description: OpenAPI spec to build from (valid values are the --env cases in gulpfile.js)
+        type: choice
+        options:
+          - production
+          - next
+        default: production
+      context:
+        description: Optional note for the PR body, e.g. the skulabs PR that changed the API
+        type: string
+        required: false
+      auto_merge:
+        description: Merge the PR (deploy) when the source is production and no endpoint is removed
+        type: boolean
+        default: true
+
+permissions: {}
+
+concurrency:
+  group: update-spec
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      changed: ${{ steps.diff.outputs.changed }}
+      removed: ${{ steps.diff.outputs.removed }}
+      date: ${{ steps.diff.outputs.date }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+
+      - name: Build docs from the ${{ inputs.source }} spec
+        run: npx gulp --env="$SOURCE"
+        env:
+          SOURCE: ${{ inputs.source }}
+
+      - name: Summarize endpoint changes
+        id: diff
+        env:
+          SOURCE: ${{ inputs.source }}
+          CONTEXT: ${{ inputs.context }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          git show HEAD:openapi.json > "$RUNNER_TEMP/openapi-before.json"
+          echo "date=$(date -u +%F)" >> "$GITHUB_OUTPUT"
+
+          set +e
+          bash scripts/spec-diff.sh "$RUNNER_TEMP/openapi-before.json" openapi.json > "$RUNNER_TEMP/spec-diff.md"
+          diff_status=$?
+          set -e
+
+          case "$diff_status" in
+            0)
+              echo "changed=false" >> "$GITHUB_OUTPUT"
+              echo "No endpoint changes: the docs already match the $SOURCE spec." >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+              ;;
+            1) echo "removed=false" >> "$GITHUB_OUTPUT" ;;
+            2) echo "removed=true" >> "$GITHUB_OUTPUT" ;;
+            *)
+              echo "::error::spec-diff.sh failed (exit $diff_status); the fetched spec is unreadable or malformed"
+              exit 1
+              ;;
+          esac
+
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+          cat "$RUNNER_TEMP/spec-diff.md" >> "$GITHUB_STEP_SUMMARY"
+          mkdir -p "$RUNNER_TEMP/build/snippets"
+          cp -R openapi.json mint.json api-docs "$RUNNER_TEMP/build/"
+          cp snippets/LastUpdated.mdx "$RUNNER_TEMP/build/snippets/"
+          {
+            echo "Regenerated from the **$SOURCE** OpenAPI spec by [this workflow run]($RUN_URL)."
+            if [ -n "$CONTEXT" ]; then printf '\n%s\n' "$CONTEXT"; fi
+            echo
+            echo "Merging publishes to https://skulabs.com/api."
+            echo
+            cat "$RUNNER_TEMP/spec-diff.md"
+          } > "$RUNNER_TEMP/build/pr-body.md"
+
+      - uses: actions/upload-artifact@v4
+        if: steps.diff.outputs.changed == 'true'
+        with:
+          name: docs-build
+          path: ${{ runner.temp }}/build
+          retention-days: 1
+
+  publish:
+    needs: build
+    if: needs.build.outputs.changed == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: docs-build
+          path: ${{ runner.temp }}/build
+
+      - name: Apply the generated docs
+        run: |
+          rm -rf api-docs
+          cp -R "$RUNNER_TEMP/build/openapi.json" "$RUNNER_TEMP/build/mint.json" "$RUNNER_TEMP/build/api-docs" .
+          cp "$RUNNER_TEMP/build/snippets/LastUpdated.mdx" snippets/
+
+      - name: Open or update the PR
+        id: pr
+        uses: peter-evans/create-pull-request@v7
+        with:
+          # One fixed branch, so a PR held for review is updated instead of joined by another
+          branch: feat/update-spec
+          base: main
+          add-paths: |
+            openapi.json
+            mint.json
+            api-docs/**
+            snippets/LastUpdated.mdx
+          commit-message: "docs: regenerate API reference from ${{ inputs.source }} spec"
+          title: "Update API docs: ${{ needs.build.outputs.date }}"
+          body-path: ${{ runner.temp }}/build/pr-body.md
+          delete-branch: true
+
+      - name: Merge unless endpoints were removed
+        if: steps.pr.outputs.pull-request-number
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ steps.pr.outputs.pull-request-number }}
+          PR_URL: ${{ steps.pr.outputs.pull-request-url }}
+          REMOVED: ${{ needs.build.outputs.removed }}
+          SOURCE: ${{ inputs.source }}
+          AUTO_MERGE: ${{ inputs.auto_merge }}
+        run: |
+          echo "PR: $PR_URL" >> "$GITHUB_STEP_SUMMARY"
+          if [ "$SOURCE" != "production" ] || [ "$AUTO_MERGE" != "true" ]; then
+            echo "Left open: auto-merge runs only for production with auto_merge on." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          if [ "$REMOVED" = "true" ]; then
+            gh pr comment "$PR_NUMBER" --body "Not auto-merged: this run removes endpoints from the public docs, which breaks integrators. Confirm the removal is intended (and not a \`backend/openapi/specs.ts\` filter regression) before merging."
+            echo "Left open for review: endpoints were removed." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          gh pr merge "$PR_NUMBER" --squash --delete-branch
+          echo "Merged: deploying to https://skulabs.com/api." >> "$GITHUB_STEP_SUMMARY"
