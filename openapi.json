@@ -4670,6 +4670,12 @@
                         "type": "string",
                         "description": "Default location ID",
                         "example": "507f1f77bcf86cd799439011"
+                      },
+                      "default_billing_profile_id": {
+                        "type": "string",
+                        "nullable": true,
+                        "description": "Billing profile new purchase orders for this supplier are issued under. Must belong to this account",
+                        "example": "507f1f77bcf86cd799439011"
                       }
                     },
                     "required": [
@@ -6422,6 +6428,12 @@
                       "location_id": {
                         "type": "string",
                         "description": "Default location ID",
+                        "example": "507f1f77bcf86cd799439011"
+                      },
+                      "default_billing_profile_id": {
+                        "type": "string",
+                        "nullable": true,
+                        "description": "Billing profile new purchase orders for this supplier are issued under. Send null to clear it",
                         "example": "507f1f77bcf86cd799439011"
                       },
                       "feed_info": {
@@ -47458,7 +47470,7 @@
       "post": {
         "operationId": "post_purchase_order_create",
         "summary": "Purchase Order - Create",
-        "description": "August 2023: Now supports item_id, kit_id, sku (SKULabs Kit or Item), mpn (Supplier MPN), or barcode (SKULabs Kit or Item barcode) as lookup fields in the item array.",
+        "description": "August 2023: Now supports item_id, kit_id, sku (SKULabs Kit or Item), mpn (Supplier MPN), or barcode (SKULabs Kit or Item barcode) as lookup fields in the item array. This endpoint takes a fixed positional parameter list and cannot carry a billing profile; use new_create or create_v2 to issue a purchase order under a specific billing profile.",
         "tags": [
           "purchase_order"
         ],
@@ -47987,7 +47999,7 @@
       "post": {
         "operationId": "post_purchase_order_create_v2",
         "summary": "Purchase Order - Create V2",
-        "description": "Create a purchase order using names instead of IDs for store, distributor, and warehouse. Supports item lookup by SKU, MPN, or barcode. Set \"update\": true in the data object with an existing \"number\" to update that purchase order in place (all provided fields overwrite it) instead of erroring on a duplicate; when no PO matches the number a new one is created.",
+        "description": "Create a purchase order using names instead of IDs for store, distributor, and warehouse. Pass \"billing_profile_id\", or \"billing_profile_name\" to select the billing profile the PO is issued under by name. Supports item lookup by SKU, MPN, or barcode. Set \"update\": true in the data object with an existing \"number\" to update that purchase order in place (all provided fields overwrite it) instead of erroring on a duplicate; when no PO matches the number a new one is created.",
         "tags": [
           "purchase_order"
         ],
@@ -52511,7 +52523,7 @@
       "post": {
         "operationId": "post_purchase_order_new_create",
         "summary": "Purchase Order - New Create",
-        "description": "Create a purchase order using the latest creation endpoint with enhanced validation.",
+        "description": "Create a purchase order using the latest creation endpoint with enhanced validation. Pass \"billing_profile_id\" in the data object to select the billing profile the PO is issued under.",
         "tags": [
           "purchase_order"
         ],
@@ -55190,6 +55202,420 @@
         ]
       }
     },
+    "/s/job/v2/shipments/{shipmentId}/fulfillment": {
+      "delete": {
+        "operationId": "v2_shipments_cancelFulfillment",
+        "summary": "Cancel a channel fulfillment",
+        "description": "Queues cancellation of the sales channel fulfillment for this shipment and un-notifies it in SKULabs. The carrier label is not voided. The channel call runs asynchronously, so a \"queued\" response means the cancellation has not run yet; the outcome is written to the order log. Only Shopify is processed today, and other integrations return \"unsupported\" with a reason. If the shipment has not been voided, the order keeps its shipped status and its label stays live while the channel fulfillment is cancelled.",
+        "tags": [
+          "shipping"
+        ],
+        "security": [
+          {
+            "SKULabsToken": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://app.skulabs.com"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "requestId": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "queued",
+                        "skipped",
+                        "unsupported"
+                      ]
+                    },
+                    "reason": {
+                      "type": "string"
+                    },
+                    "orderStatus": {
+                      "type": "string"
+                    },
+                    "processing": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "requestId",
+                    "status"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Malformed request. Check that you have the correct parameters and that they are formatted correctly.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string",
+                          "description": "Detailed error message"
+                        },
+                        "code": {
+                          "type": "string",
+                          "description": "Machine-readable error code"
+                        },
+                        "overview": {
+                          "type": "string",
+                          "description": "Short human-friendly description"
+                        },
+                        "statusCode": {
+                          "type": "number",
+                          "description": "HTTP status code"
+                        },
+                        "origin": {
+                          "type": "string",
+                          "description": "Error source"
+                        },
+                        "skulabsTraceId": {
+                          "type": "string",
+                          "description": "Trace ID for support"
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "error",
+                            "notice",
+                            "success"
+                          ],
+                          "description": "Error severity for UI handling"
+                        },
+                        "user_error": {
+                          "type": "boolean",
+                          "description": "Whether the error was caused by user input"
+                        },
+                        "display": {
+                          "type": "string",
+                          "enum": [
+                            "notification",
+                            "panel"
+                          ],
+                          "description": "Suggested UI display mode for the error"
+                        }
+                      },
+                      "required": [
+                        "message",
+                        "statusCode"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. Did you forget to include your API key?",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string",
+                          "description": "Detailed error message"
+                        },
+                        "code": {
+                          "type": "string",
+                          "description": "Machine-readable error code"
+                        },
+                        "overview": {
+                          "type": "string",
+                          "description": "Short human-friendly description"
+                        },
+                        "statusCode": {
+                          "type": "number",
+                          "description": "HTTP status code"
+                        },
+                        "origin": {
+                          "type": "string",
+                          "description": "Error source"
+                        },
+                        "skulabsTraceId": {
+                          "type": "string",
+                          "description": "Trace ID for support"
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "error",
+                            "notice",
+                            "success"
+                          ],
+                          "description": "Error severity for UI handling"
+                        },
+                        "user_error": {
+                          "type": "boolean",
+                          "description": "Whether the error was caused by user input"
+                        },
+                        "display": {
+                          "type": "string",
+                          "enum": [
+                            "notification",
+                            "panel"
+                          ],
+                          "description": "Suggested UI display mode for the error"
+                        }
+                      },
+                      "required": [
+                        "message",
+                        "statusCode"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden. Insufficient permissions.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string",
+                          "description": "Detailed error message"
+                        },
+                        "code": {
+                          "type": "string",
+                          "description": "Machine-readable error code"
+                        },
+                        "overview": {
+                          "type": "string",
+                          "description": "Short human-friendly description"
+                        },
+                        "statusCode": {
+                          "type": "number",
+                          "description": "HTTP status code"
+                        },
+                        "origin": {
+                          "type": "string",
+                          "description": "Error source"
+                        },
+                        "skulabsTraceId": {
+                          "type": "string",
+                          "description": "Trace ID for support"
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "error",
+                            "notice",
+                            "success"
+                          ],
+                          "description": "Error severity for UI handling"
+                        },
+                        "user_error": {
+                          "type": "boolean",
+                          "description": "Whether the error was caused by user input"
+                        },
+                        "display": {
+                          "type": "string",
+                          "enum": [
+                            "notification",
+                            "panel"
+                          ],
+                          "description": "Suggested UI display mode for the error"
+                        }
+                      },
+                      "required": [
+                        "message",
+                        "statusCode"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ]
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests. Rate limit exceeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string",
+                          "description": "Detailed error message"
+                        },
+                        "code": {
+                          "type": "string",
+                          "description": "Machine-readable error code"
+                        },
+                        "overview": {
+                          "type": "string",
+                          "description": "Short human-friendly description"
+                        },
+                        "statusCode": {
+                          "type": "number",
+                          "description": "HTTP status code"
+                        },
+                        "origin": {
+                          "type": "string",
+                          "description": "Error source"
+                        },
+                        "skulabsTraceId": {
+                          "type": "string",
+                          "description": "Trace ID for support"
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "error",
+                            "notice",
+                            "success"
+                          ],
+                          "description": "Error severity for UI handling"
+                        },
+                        "user_error": {
+                          "type": "boolean",
+                          "description": "Whether the error was caused by user input"
+                        },
+                        "display": {
+                          "type": "string",
+                          "enum": [
+                            "notification",
+                            "panel"
+                          ],
+                          "description": "Suggested UI display mode for the error"
+                        }
+                      },
+                      "required": [
+                        "message",
+                        "statusCode"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string",
+                          "description": "Detailed error message"
+                        },
+                        "code": {
+                          "type": "string",
+                          "description": "Machine-readable error code"
+                        },
+                        "overview": {
+                          "type": "string",
+                          "description": "Short human-friendly description"
+                        },
+                        "statusCode": {
+                          "type": "number",
+                          "description": "HTTP status code"
+                        },
+                        "origin": {
+                          "type": "string",
+                          "description": "Error source"
+                        },
+                        "skulabsTraceId": {
+                          "type": "string",
+                          "description": "Trace ID for support"
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "error",
+                            "notice",
+                            "success"
+                          ],
+                          "description": "Error severity for UI handling"
+                        },
+                        "user_error": {
+                          "type": "boolean",
+                          "description": "Whether the error was caused by user input"
+                        },
+                        "display": {
+                          "type": "string",
+                          "enum": [
+                            "notification",
+                            "panel"
+                          ],
+                          "description": "Suggested UI display mode for the error"
+                        }
+                      },
+                      "required": [
+                        "message",
+                        "statusCode"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "shipmentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
     "/s/ship/shipping/restore_inventory": {
       "post": {
         "operationId": "post_shipping_restore_inventory",
@@ -56054,7 +56480,7 @@
       "delete": {
         "operationId": "delete_shipping_void",
         "summary": "Shipping - Void",
-        "description": "Void a shipment, cancelling the shipping label and optionally restoring inventory.",
+        "description": "Void a shipment, cancelling the shipping label and optionally restoring inventory. Set cancel_channel_fulfillment to also undo the fulfillment on the sales channel so the items can be shipped again.",
         "tags": [
           "shipping"
         ],
@@ -56475,6 +56901,11 @@
                   "force_void": {
                     "type": "boolean",
                     "description": "Force void even if carrier void fails"
+                  },
+                  "cancel_channel_fulfillment": {
+                    "type": "boolean",
+                    "description": "Also cancel the fulfillment on the sales channel so the items become shippable again. Requires shipment_id. Queued and processed asynchronously; the void itself is unaffected if the channel rejects it. The channel-side cancellation runs only for Shopify stores; on any other store the shipment is still un-notified in SKULabs, the order returns to an unshipped status, and the reason is recorded on the order. Defaults to false.",
+                    "example": true
                   }
                 },
                 "required": [
@@ -62594,6 +63025,10 @@
             "type": "string",
             "description": "Shipping mode (e.g. bulk)"
           },
+          "mode": {
+            "type": "string",
+            "description": "Picking mode: steps, batch_reverse_scanning, manual_pick_list, manual_packing_slips, no_picking, pick_after_shipping"
+          },
           "n_sku_batch": {
             "type": "boolean",
             "description": "Whether to group by number of unique SKUs"
@@ -62621,8 +63056,11 @@
             "type": "string",
             "enum": [
               "pick",
-              "pack",
-              "ship"
+              "print",
+              "ship",
+              "ship_summary",
+              "box",
+              "stats"
             ],
             "description": "Batch state"
           },
@@ -62630,6 +63068,8 @@
             "type": "string",
             "enum": [
               "opened",
+              "in progress",
+              "cleared",
               "shipped"
             ],
             "description": "Batch status"
@@ -63116,6 +63556,12 @@
           "location_id": {
             "type": "string",
             "description": "Default location ID for this supplier",
+            "example": "507f1f77bcf86cd799439011"
+          },
+          "default_billing_profile_id": {
+            "type": "string",
+            "nullable": true,
+            "description": "Billing profile purchase orders for this supplier are issued under",
             "example": "507f1f77bcf86cd799439011"
           }
         },
@@ -64873,6 +65319,10 @@
             "type": "boolean",
             "description": "Whether item was out of stock"
           },
+          "item_skipped": {
+            "type": "boolean",
+            "description": "Whether the picker skipped the item without picking it"
+          },
           "note": {
             "type": "string",
             "description": "Scan note (e.g. serial number)"
@@ -66337,6 +66787,11 @@
           "warehouse_id": {
             "type": "string",
             "description": "Destination warehouse ID"
+          },
+          "billing_profile_id": {
+            "type": "string",
+            "nullable": true,
+            "description": "Billing profile this PO is issued under, driving the Bill To block. Falls back to the account default when unset."
           },
           "memo": {
             "type": "string",
