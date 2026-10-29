@@ -272,6 +272,7 @@
     {
       "group": "Shipping",
       "pages": [
+        "api-docs/shipping/cancel-a-channel-fulfillment",
         "api-docs/shipping/restore-inventory",
         "api-docs/shipping/set-manifested",
         "api-docs/shipping/void"
