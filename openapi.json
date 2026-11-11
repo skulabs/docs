@@ -116,6 +116,16 @@
                   "properties": {
                     "batch": {
                       "$ref": "#/components/schemas/BatchDetail"
+                    },
+                    "batch_settings": {
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/BatchSettings"
+                        },
+                        {
+                          "description": "Settings the batch is picked with: its own snapshot, or its creator's for a batch built without one. Never the viewing user's."
+                        }
+                      ]
                     }
                   },
                   "required": [
@@ -1494,6 +1504,75 @@
           },
           "403": {
             "description": "Forbidden. Insufficient permissions.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string",
+                          "description": "Detailed error message"
+                        },
+                        "code": {
+                          "type": "string",
+                          "description": "Machine-readable error code"
+                        },
+                        "overview": {
+                          "type": "string",
+                          "description": "Short human-friendly description"
+                        },
+                        "statusCode": {
+                          "type": "number",
+                          "description": "HTTP status code"
+                        },
+                        "origin": {
+                          "type": "string",
+                          "description": "Error source"
+                        },
+                        "skulabsTraceId": {
+                          "type": "string",
+                          "description": "Trace ID for support"
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "error",
+                            "notice",
+                            "success"
+                          ],
+                          "description": "Error severity for UI handling"
+                        },
+                        "user_error": {
+                          "type": "boolean",
+                          "description": "Whether the error was caused by user input"
+                        },
+                        "display": {
+                          "type": "string",
+                          "enum": [
+                            "notification",
+                            "panel"
+                          ],
+                          "description": "Suggested UI display mode for the error"
+                        }
+                      },
+                      "required": [
+                        "message",
+                        "statusCode"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Customer not found",
             "content": {
               "application/json": {
                 "schema": {
@@ -38086,15 +38165,16 @@
                   "type": "string",
                   "enum": [
                     "unstarted",
-                    "in_progress",
-                    "shipped",
-                    "cancelled",
+                    "opened",
+                    "in progress",
                     "cleared",
                     "delayed",
                     "stopped",
-                    "partially shipped",
-                    "archived",
                     "awaiting fulfillment",
+                    "partially shipped",
+                    "shipped",
+                    "cancelled",
+                    "archived",
                     "pending",
                     "partially cleared"
                   ],
@@ -38141,7 +38221,7 @@
                 },
                 "batch_number": {
                   "type": "number",
-                  "description": "Exact match on batch_number."
+                  "description": "Orders on this batch, including orders also on other batches."
                 },
                 "tags": {
                   "anyOf": [
@@ -43610,15 +43690,16 @@
                     "type": "string",
                     "enum": [
                       "unstarted",
-                      "in_progress",
-                      "shipped",
-                      "cancelled",
+                      "opened",
+                      "in progress",
                       "cleared",
                       "delayed",
                       "stopped",
-                      "partially shipped",
-                      "archived",
                       "awaiting fulfillment",
+                      "partially shipped",
+                      "shipped",
+                      "cancelled",
+                      "archived",
                       "pending",
                       "partially cleared"
                     ],
@@ -43648,7 +43729,7 @@
                   },
                   "unarchive": {
                     "type": "boolean",
-                    "description": "When true, forces the order out of the archived state: returns it to processing, removes the \"Hold - Archived\" tag, and flags it to prevent immediate auto re-archiving. Combine with a status (e.g. \"unstarted\") to restart a previously shipped or archived order."
+                    "description": "When true, forces the order out of the archived state: returns it to processing, removes the \"Hold - Archived\" tag, and exempts it from missing-order auto archiving until the channel next reports the order as open. Combine with a status (e.g. \"unstarted\") to restart a previously shipped or archived order."
                   }
                 },
                 "required": [
@@ -45383,15 +45464,16 @@
                       "type": "string",
                       "enum": [
                         "unstarted",
-                        "in_progress",
-                        "shipped",
-                        "cancelled",
+                        "opened",
+                        "in progress",
                         "cleared",
                         "delayed",
                         "stopped",
-                        "partially shipped",
-                        "archived",
                         "awaiting fulfillment",
+                        "partially shipped",
+                        "shipped",
+                        "cancelled",
+                        "archived",
                         "pending",
                         "partially cleared"
                       ],
@@ -47423,6 +47505,10 @@
                         "item_id": {
                           "type": "string",
                           "description": "Item ID (required when accepting an item, omit for kit)"
+                        },
+                        "item_occurrence": {
+                          "type": "integer",
+                          "description": "Which PO row of this item to receive on (0 = first row with this item). Defaults to the first row still waiting on units"
                         },
                         "kit_id": {
                           "type": "string",
@@ -58190,7 +58276,7 @@
       "delete": {
         "operationId": "delete_tag_remove",
         "summary": "Tag - Remove",
-        "description": "Permanently delete a tag.",
+        "description": "Permanently delete a tag. The Auto-Deduct and Batch Allocation order tags are utility tags and can not be deleted; trying returns an error.",
         "tags": [
           "tag"
         ],
@@ -62957,6 +63043,13 @@
           "batch_number": {
             "type": "number",
             "description": "Batch number this order belongs to"
+          },
+          "claimed_line_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Lines this batch owns on the order, as line_id or, for a geo-routed split half, gr_line_id. Absent for a batch built before multi-batch picking, which picks the whole order."
           }
         },
         "required": [
@@ -63013,6 +63106,33 @@
             },
             "description": "Warehouse IDs (or \"unassigned\") an order must be assigned to in order to be batched"
           },
+          "order_statuses": {
+            "type": "object",
+            "nullable": true,
+            "properties": {
+              "has": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "does_not_have": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Order statuses this batch type draws from, as { has, does_not_have }. Null or absent falls back to unstarted and awaiting fulfillment, plus partially shipped when include_partially_shipped is set",
+            "example": {
+              "has": [
+                "unstarted",
+                "opened",
+                "in progress"
+              ],
+              "does_not_have": []
+            }
+          },
           "include_out_of_stock": {
             "type": "boolean",
             "description": "Whether to include out of stock orders"
@@ -63051,6 +63171,11 @@
           "number": {
             "type": "number",
             "description": "Batch number"
+          },
+          "user_id": {
+            "type": "string",
+            "description": "User who created the batch",
+            "example": "507f1f77bcf86cd799439011"
           },
           "state": {
             "type": "string",
@@ -64734,6 +64859,11 @@
             "nullable": true,
             "description": "Last price pushed to the channel"
           },
+          "last_lag_time": {
+            "type": "number",
+            "nullable": true,
+            "description": "Last lag time (days) accepted by the channel (Walmart US)"
+          },
           "inventory": {
             "type": "array",
             "items": {
@@ -64920,6 +65050,11 @@
             "type": "number",
             "nullable": true,
             "description": "Last price pushed to the channel"
+          },
+          "last_lag_time": {
+            "type": "number",
+            "nullable": true,
+            "description": "Last lag time (days) accepted by the channel (Walmart US)"
           },
           "custom_fields": {
             "type": "array",
@@ -65658,15 +65793,16 @@
             "type": "string",
             "enum": [
               "unstarted",
-              "in_progress",
-              "shipped",
-              "cancelled",
+              "opened",
+              "in progress",
               "cleared",
               "delayed",
               "stopped",
-              "partially shipped",
-              "archived",
               "awaiting fulfillment",
+              "partially shipped",
+              "shipped",
+              "cancelled",
+              "archived",
               "pending",
               "partially cleared"
             ],
@@ -65754,7 +65890,14 @@
           "batch_number": {
             "type": "number",
             "nullable": true,
-            "description": "Batch number"
+            "description": "The batch the order is currently on. Null when no batch holds it."
+          },
+          "batch_numbers": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "Every batch the order is on. An order can be split across batches by line."
           },
           "channel_status": {
             "type": "string",
@@ -65785,15 +65928,16 @@
             "type": "string",
             "enum": [
               "unstarted",
-              "in_progress",
-              "shipped",
-              "cancelled",
+              "opened",
+              "in progress",
               "cleared",
               "delayed",
               "stopped",
-              "partially shipped",
-              "archived",
               "awaiting fulfillment",
+              "partially shipped",
+              "shipped",
+              "cancelled",
+              "archived",
               "pending",
               "partially cleared"
             ],
@@ -65823,7 +65967,14 @@
           "batch_number": {
             "type": "number",
             "nullable": true,
-            "description": "Batch number"
+            "description": "The batch the order is currently on. Null when no batch holds it."
+          },
+          "batch_numbers": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "Every batch the order is on. An order can be split across batches by line."
           },
           "location": {
             "type": "string",
@@ -65889,6 +66040,44 @@
           "archived": {
             "type": "boolean",
             "description": "Whether the order is archived"
+          },
+          "cross_docking": {
+            "type": "object",
+            "properties": {
+              "sessions": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Cross-docking session ID",
+                      "example": "507f1f77bcf86cd799439011"
+                    },
+                    "number": {
+                      "type": "number",
+                      "description": "Cross-docking session number shown as \"Cross Docking #\""
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "number"
+                  ]
+                },
+                "description": "Cross-docking sessions that shipped this order"
+              },
+              "station_id": {
+                "type": "string",
+                "description": "Station that shipped the order",
+                "example": "507f1f77bcf86cd799439011"
+              },
+              "user_id": {
+                "type": "string",
+                "description": "User who shipped the order at the station",
+                "example": "507f1f77bcf86cd799439011"
+              }
+            },
+            "description": "Cross-docking stamp, present when the order shipped from a cross-docking station"
           }
         }
       },
@@ -65908,15 +66097,16 @@
             "type": "string",
             "enum": [
               "unstarted",
-              "in_progress",
-              "shipped",
-              "cancelled",
+              "opened",
+              "in progress",
               "cleared",
               "delayed",
               "stopped",
-              "partially shipped",
-              "archived",
               "awaiting fulfillment",
+              "partially shipped",
+              "shipped",
+              "cancelled",
+              "archived",
               "pending",
               "partially cleared"
             ],
@@ -66182,15 +66372,16 @@
             "type": "string",
             "enum": [
               "unstarted",
-              "in_progress",
-              "shipped",
-              "cancelled",
+              "opened",
+              "in progress",
               "cleared",
               "delayed",
               "stopped",
-              "partially shipped",
-              "archived",
               "awaiting fulfillment",
+              "partially shipped",
+              "shipped",
+              "cancelled",
+              "archived",
               "pending",
               "partially cleared"
             ],
@@ -66355,7 +66546,14 @@
           "batch_number": {
             "type": "number",
             "nullable": true,
-            "description": "Batch number"
+            "description": "The batch the order is currently on. Null when no batch holds it."
+          },
+          "batch_numbers": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "Every batch the order is on. An order can be split across batches by line."
           },
           "overriden": {
             "type": "boolean",
@@ -66521,15 +66719,16 @@
             "type": "string",
             "enum": [
               "unstarted",
-              "in_progress",
-              "shipped",
-              "cancelled",
+              "opened",
+              "in progress",
               "cleared",
               "delayed",
               "stopped",
-              "partially shipped",
-              "archived",
               "awaiting fulfillment",
+              "partially shipped",
+              "shipped",
+              "cancelled",
+              "archived",
               "pending",
               "partially cleared"
             ],
