@@ -56582,7 +56582,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Shipment voided and inventory restored (returns updated order shipments)",
+            "description": "Shipment voided and inventory restored (returns updated order shipments). When USPS files a refund request instead of cancelling a USPS (SKULabs) label, the shipment gets `void_status: refund_pending` and the response a `skulabs_warning` notice",
             "content": {
               "application/json": {
                 "schema": {
@@ -56599,6 +56599,24 @@
                         "$ref": "#/components/schemas/ShipmentResult"
                       },
                       "description": "Order shipments"
+                    },
+                    "skulabs_warning": {
+                      "type": "object",
+                      "nullable": true,
+                      "properties": {
+                        "message": {
+                          "type": "string",
+                          "description": "Warning or notice message"
+                        },
+                        "type": {
+                          "type": "string",
+                          "description": "Warning type. `notice` when a USPS (SKULabs) void was recorded as refund pending"
+                        }
+                      },
+                      "required": [
+                        "message"
+                      ],
+                      "description": "Non-fatal notice from the void, such as a refund pending or a sales channel cancellation that could not be queued"
                     }
                   }
                 }
@@ -56606,7 +56624,7 @@
             }
           },
           "400": {
-            "description": "Bad request",
+            "description": "Bad request, or the carrier refused the void. When USPS (SKULabs) refuses, the label stays active and is not marked voided. USPS refuses to void return labels and labels already on a SCAN form.",
             "content": {
               "application/json": {
                 "schema": {
@@ -65259,6 +65277,17 @@
             "type": "boolean",
             "description": "Whether the shipment is voided"
           },
+          "void_status": {
+            "type": "string",
+            "enum": [
+              "refund_pending"
+            ],
+            "description": "Set on a voided USPS (SKULabs) label when USPS answered the void with a refund request (a dispute) instead of cancelling it. The payment account is credited when USPS approves the refund."
+          },
+          "void_note": {
+            "type": "string",
+            "description": "Void outcome detail, for example \"Refund requested (dispute 123)\""
+          },
           "return_label": {
             "type": "boolean",
             "description": "Whether this is a return label"
@@ -67566,6 +67595,17 @@
           "deducted": {
             "type": "boolean",
             "description": "Whether inventory was deducted"
+          },
+          "void_status": {
+            "type": "string",
+            "enum": [
+              "refund_pending"
+            ],
+            "description": "Set on a voided USPS (SKULabs) label when USPS answered the void with a refund request (a dispute) instead of cancelling it. The payment account is credited when USPS approves the refund."
+          },
+          "void_note": {
+            "type": "string",
+            "description": "Void outcome detail, for example \"Refund requested (dispute 123)\""
           }
         }
       },
